@@ -1,3 +1,7 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Grundschutz++ Register</title>
 <style>
 /* Layout: Register. Links das Verzeichnis aller Anforderungen als Kästchen je Praxis, rechts die Akte des gewählten Eintrags. Jede Kennung ist ein Link; Zustand steckt in der Form des Kästchens, nicht nur in der Farbe. */
@@ -129,7 +133,7 @@ td.n { font-variant-numeric: tabular-nums; white-space: nowrap; }
   <section class="state">
     <p id="sum"></p>
     <div class="runs">
-      <svg id="runsvg" role="img" aria-label="Pipeline-Läufe"></svg>
+      <svg id="runsvg" role="img" aria-label="Läufe"></svg>
       <div class="small" id="runcap"></div>
     </div>
   </section>
@@ -150,8 +154,8 @@ const D = /*__DATA__*/null;
 const THREAT = {"G 0.1":"Feuer","G 0.2":"Ungünstige klimatische Bedingungen","G 0.3":"Wasser","G 0.4":"Verschmutzung, Staub, Korrosion","G 0.5":"Naturkatastrophen","G 0.6":"Katastrophen im Umfeld","G 0.7":"Großereignisse im Umfeld","G 0.8":"Ausfall oder Störung der Stromversorgung","G 0.9":"Ausfall oder Störung von Kommunikationsnetzen","G 0.10":"Ausfall oder Störung von Versorgungsnetzen","G 0.11":"Ausfall oder Störung von Dienstleistern","G 0.12":"Elektromagnetische Störstrahlung","G 0.13":"Abfangen kompromittierender Strahlung","G 0.14":"Ausspähen von Informationen (Spionage)","G 0.15":"Abhören","G 0.16":"Diebstahl von Geräten, Datenträgern oder Dokumenten","G 0.17":"Verlust von Geräten, Datenträgern oder Dokumenten","G 0.18":"Fehlplanung oder fehlende Anpassung","G 0.19":"Offenlegung schützenswerter Informationen","G 0.20":"Informationen oder Produkte aus unzuverlässiger Quelle","G 0.21":"Manipulation von Hard- oder Software","G 0.22":"Manipulation von Informationen","G 0.23":"Unbefugtes Eindringen in IT-Systeme","G 0.24":"Zerstörung von Geräten oder Datenträgern","G 0.25":"Ausfall von Geräten oder Systemen","G 0.26":"Fehlfunktion von Geräten oder Systemen","G 0.27":"Ressourcenmangel","G 0.28":"Software-Schwachstellen oder -Fehler","G 0.29":"Verstoß gegen Gesetze oder Regelungen","G 0.30":"Unberechtigte Nutzung oder Administration von Geräten und Systemen","G 0.31":"Fehlerhafte Nutzung oder Administration von Geräten und Systemen","G 0.32":"Missbrauch von Berechtigungen","G 0.33":"Personalausfall","G 0.34":"Anschlag","G 0.35":"Nötigung, Erpressung oder Korruption","G 0.36":"Identitätsdiebstahl","G 0.37":"Abstreiten von Handlungen","G 0.38":"Missbrauch personenbezogener Daten","G 0.39":"Schadprogramme","G 0.40":"Verhinderung von Diensten (Denial of Service)","G 0.41":"Sabotage","G 0.42":"Social Engineering","G 0.43":"Einspielen von Nachrichten","G 0.44":"Unbefugtes Eindringen in Räumlichkeiten","G 0.45":"Datenverlust","G 0.46":"Integritätsverlust schützenswerter Informationen","G 0.47":"Schädliche Seiteneffekte IT-gestützter Angriffe"};
 const ISO_THEME = {"5":"Organisatorische Maßnahmen","6":"Personenbezogene Maßnahmen","7":"Physische Maßnahmen","8":"Technologische Maßnahmen"};
 const REL = {"equivalent-to":"gleichwertig","subset-of":"Teilmenge","intersects-with":"überschneidend","superset-of":"Obermenge"};
-const ST = {I: "umgesetzt", P: "teilweise umgesetzt", L: "geplant"};
-const CATURL = "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/blob/" + D.catalog + "/control_layer/Grundschutz%2B%2B/Grundschutz%2B%2B-resolved_catalog.json";
+const ST = {I: "umgesetzt", P: "teilweise umgesetzt", L: "geplant", "-": "ohne Angabe"};
+const CATURL = D.catalogUrl || "#";
 
 const R = D.reqs, TODAY = D.run.date;
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
@@ -175,7 +179,7 @@ const list = (ids, note) => ids.length ? ids.map(i => ref(i, note && note(i))).j
 
 // Kopf, Satz, Läufe
 document.getElementById("proj").textContent = "· " + D.run.project;
-document.getElementById("meta").innerHTML = `<span>Lauf ${D.run.id}</span><span>${de(D.run.date)} ${D.run.time}</span><span>Commit ${D.run.sha}</span><span><a href="${CATURL}" target="_blank" rel="noopener">Katalog ${D.catalog.slice(0,7)}</a></span>`;
+document.getElementById("meta").innerHTML = `<span>Stand ${de(D.run.date)} ${D.run.time}</span><span>Commit ${D.run.sha}</span><span><a href="${CATURL}" target="_blank" rel="noopener">Katalog ${D.catalog.slice(0,7)}</a></span>`;
 const ids = D.order, n = ids.length;
 const cnt = k => ids.filter(i => R[i].st === k).length;
 const meas = ids.filter(i => R[i].m).length;
@@ -192,11 +196,11 @@ document.getElementById("sum").innerHTML =
   let s = `<line x1="0" x2="${W}" y1="${H/2}" y2="${H/2}" stroke="var(--rule)" stroke-width="1"/>`;
   rs.forEach((r, i) => {
     const x = 2 + (Date.parse(r.d + "T" + r.t) - t0) / (t1 - t0) * (W - 4), last = i === rs.length - 1;
-    s += `<line x1="${x}" x2="${x}" y1="${r.ok ? 4 : H/2}" y2="${r.ok ? H/2 : H-4}" stroke="${r.ok ? "var(--mark)" : "var(--bad)"}" stroke-width="${last ? 3 : 1.6}"><title>Lauf ${r.id}, ${de(r.d)} ${r.t}, ${r.ok ? "bestanden" : "rot"}</title></line>`;
+    s += `<line x1="${x}" x2="${x}" y1="${r.ok ? 4 : H/2}" y2="${r.ok ? H/2 : H-4}" stroke="${r.ok ? "var(--mark)" : "var(--bad)"}" stroke-width="${last ? 3 : 1.6}"><title>Lauf ${de(r.d)} ${r.t}: ${r.ok ? "alles erfüllt" : r.n + " nicht erfüllt"}</title></line>`;
   });
   svg.innerHTML = s;
   const ok = rs.filter(r => r.ok).length;
-  document.getElementById("runcap").innerHTML = `Pipeline-Läufe ${de(rs[0].d).slice(0,6)} bis ${de(rs.at(-1).d)}: <span class="num">${ok}</span> bestanden (oben), <span class="num">${rs.length - ok}</span> rot (unten). Der letzte ist dick.`;
+  document.getElementById("runcap").innerHTML = `Läufe ${de(rs[0].d).slice(0,6)} bis ${de(rs.at(-1).d)}: <span class="num">${ok}</span> mit allen Messungen erfüllt (oben), <span class="num">${rs.length - ok}</span> mit nicht erfüllten (unten). Der letzte ist dick.`;
 })();
 
 // Verzeichnis
@@ -252,7 +256,7 @@ function viewReq(id) {
       <dt>Gefährdungen</dt><dd>${thr}</dd>
       <dt>Nachweis</dt><dd><span>${esc(r.doc || "nicht angegeben")}</span><span class="small">Schutzniveau ${esc(r.lvl)} · ${esc(r.mv)}</span></dd>
     </dl>
-    <div class="src">Text, Hinweise und Bezüge aus dem Grundschutz++-Katalog @ ${D.catalog.slice(0,7)}, Normen aus dem BSI-Mapping ISO 27001 zu Grundschutz++. Stand und Maßnahmen aus Lauf ${D.run.id}.</div>`;
+    <div class="src">Text, Hinweise und Bezüge aus dem Grundschutz++-Katalog @ ${D.catalog.slice(0,7)}, Normen aus dem BSI-Mapping ISO 27001 zu Grundschutz++. Stand und Maßnahmen aus dem Lauf vom ${de(D.run.date)} ${D.run.time}.</div>`;
 }
 function viewExt(id) {
   const e = D.ext[id];

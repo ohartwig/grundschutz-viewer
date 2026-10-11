@@ -1,3 +1,7 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Grundschutz++ Explorer</title>
 <style>
 /* Layout: Explorer. Oben die Suche, darunter drei Spalten: Filter mit Zählern, Trefferliste, Akte. Bezüge in der Akte öffnen den Eintrag; Prüfung, Norm, Gefährdung und Praxis lassen sich als Filter auf die Liste legen, ohne die Akte zu verlassen. */
@@ -133,6 +137,16 @@ details.hint p { margin: 6px 0 0; color: var(--ink2); font-size: 14px; max-width
 .warn { color: var(--warn); }
 .tag { font-family: var(--code); font-size: 11px; border: 1px solid var(--rule); padding: 0 5px; color: var(--ink2); white-space: nowrap; }
 .act { padding: 2px 0; }
+.hx { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+.hx .sq { margin-top: 0; }
+.sq.nf { border-color: var(--bad); }
+.sq.nf::after { content: ""; position: absolute; inset: 0; margin: auto; width: 5px; height: 5px; background: var(--bad); }
+.runs { display: grid; grid-template-columns: auto auto auto minmax(0, 1fr); gap: 2px 14px; font-size: 13px; align-items: baseline; }
+.runs .h { font-size: 12px; color: var(--ink3); }
+.runs .ch { display: flex; flex-wrap: wrap; gap: 2px 8px; }
+.runs .ch button { border: 0; background: none; padding: 0; color: var(--link); cursor: pointer; font: inherit; }
+.srcs { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--ink2); }
+.srcs .st { display: inline-block; min-width: 9ch; }
 .src { font-size: 12px; color: var(--ink3); border-top: 1px solid var(--rule2); padding-top: 10px; }
 .start { display: flex; flex-direction: column; gap: 14px; max-width: 60ch; }
 .start p { margin: 0; }
@@ -191,8 +205,26 @@ const D = /*__DATA__*/null;
 const THREAT = {"G 0.1":"Feuer","G 0.2":"Ungünstige klimatische Bedingungen","G 0.3":"Wasser","G 0.4":"Verschmutzung, Staub, Korrosion","G 0.5":"Naturkatastrophen","G 0.6":"Katastrophen im Umfeld","G 0.7":"Großereignisse im Umfeld","G 0.8":"Ausfall oder Störung der Stromversorgung","G 0.9":"Ausfall oder Störung von Kommunikationsnetzen","G 0.10":"Ausfall oder Störung von Versorgungsnetzen","G 0.11":"Ausfall oder Störung von Dienstleistern","G 0.12":"Elektromagnetische Störstrahlung","G 0.13":"Abfangen kompromittierender Strahlung","G 0.14":"Ausspähen von Informationen (Spionage)","G 0.15":"Abhören","G 0.16":"Diebstahl von Geräten, Datenträgern oder Dokumenten","G 0.17":"Verlust von Geräten, Datenträgern oder Dokumenten","G 0.18":"Fehlplanung oder fehlende Anpassung","G 0.19":"Offenlegung schützenswerter Informationen","G 0.20":"Informationen oder Produkte aus unzuverlässiger Quelle","G 0.21":"Manipulation von Hard- oder Software","G 0.22":"Manipulation von Informationen","G 0.23":"Unbefugtes Eindringen in IT-Systeme","G 0.24":"Zerstörung von Geräten oder Datenträgern","G 0.25":"Ausfall von Geräten oder Systemen","G 0.26":"Fehlfunktion von Geräten oder Systemen","G 0.27":"Ressourcenmangel","G 0.28":"Software-Schwachstellen oder -Fehler","G 0.29":"Verstoß gegen Gesetze oder Regelungen","G 0.30":"Unberechtigte Nutzung oder Administration von Geräten und Systemen","G 0.31":"Fehlerhafte Nutzung oder Administration von Geräten und Systemen","G 0.32":"Missbrauch von Berechtigungen","G 0.33":"Personalausfall","G 0.34":"Anschlag","G 0.35":"Nötigung, Erpressung oder Korruption","G 0.36":"Identitätsdiebstahl","G 0.37":"Abstreiten von Handlungen","G 0.38":"Missbrauch personenbezogener Daten","G 0.39":"Schadprogramme","G 0.40":"Verhinderung von Diensten (Denial of Service)","G 0.41":"Sabotage","G 0.42":"Social Engineering","G 0.43":"Einspielen von Nachrichten","G 0.44":"Unbefugtes Eindringen in Räumlichkeiten","G 0.45":"Datenverlust","G 0.46":"Integritätsverlust schützenswerter Informationen","G 0.47":"Schädliche Seiteneffekte IT-gestützter Angriffe"};
 const ISO_THEME = {"5":"Organisatorisch","6":"Personell","7":"Physisch","8":"Technologisch"};
 const REL = {"equivalent-to":"gleichwertig","subset-of":"Teilmenge","intersects-with":"überschneidend","superset-of":"Obermenge"};
-const ST = {I: "umgesetzt", P: "teilweise", L: "geplant"};
-const CATURL = "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/blob/" + D.catalog + "/control_layer/Grundschutz%2B%2B/Grundschutz%2B%2B-resolved_catalog.json";
+const ST = {I: "umgesetzt", P: "teilweise", L: "geplant", "-": "ohne Angabe"};
+const CATURL = D.catalogUrl;
+const BASIS = {measured: "gemessen", claimed: "zugesichert", reviewed: "Bewertung von Hand", none: "ohne Grundlage"};
+const FOUND = {s: "erfüllt", n: "nicht erfüllt", "-": "nicht gemessen"};
+const SRCST = {verified: "geprüft", unhashed: "ohne Prüfsumme", nearby: "im selben Lauf", mismatch: "Prüfsumme weicht ab", missing: "fehlt"};
+const RUNS = D.runs, NR = RUNS.length;
+// Verlauf: Stand und Messung je Lauf, "In" = umgesetzt, nicht erfüllt
+const hst = (id, k) => R[id].h[k] || "--";
+const runLabel = k => de(RUNS[k].d) + " " + RUNS[k].t;
+const hcell = (id, k) => { const [s, f] = hst(id, k); return `<i class="sq ${s}${f === "s" ? " m" : ""}${f === "n" ? " nf" : ""}" title="${esc(runLabel(k) + ": " + ST[s] + ", " + FOUND[f])}"></i>`; };
+const histKey = id => {
+  if (NR < 2) return "eins";
+  const h = R[id].h, last = h[NR - 1], changed = h.some(x => x !== last);
+  if (last[1] === "n" && h.slice(0, -1).every(x => x[1] !== "n")) return "neu";
+  if (last[1] === "n") return "rot";
+  return changed ? "wechselnd" : "stabil";
+};
+const HIST = {neu: "neu nicht erfüllt", rot: "weiter nicht erfüllt", wechselnd: "hat sich verändert", stabil: "unverändert", eins: "nur ein Lauf"};
+// Was sich von Lauf k-1 zu k verändert hat
+const changes = k => k === 0 ? [] : IDS.filter(i => hst(i, k) !== hst(i, k - 1));
 
 const R = D.reqs, IDS = D.order, TODAY = D.run.date;
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
@@ -210,6 +242,7 @@ const F = [
   { k: "st", name: "Stand", vals: r => [r.st], label: v => ST[v], order: ["I", "P", "L"] },
   { k: "plan", name: "Maßnahmenplan", vals: (r, id) => [planKey(id)], label: v => PLAN[v], order: ["od", "dl", "na", "kein"] },
   { k: "m", name: "Messung", vals: r => [r.m ? "ja" : "nein"], label: v => v === "ja" ? "gemessen" : "nicht gemessen", order: ["ja", "nein"] },
+  { k: "hx", name: "Verlauf", vals: (r, id) => [histKey(id)], label: v => HIST[v], order: ["neu", "rot", "wechselnd", "stabil", "eins"] },
   { k: "g", name: "Praxis", vals: r => [r.g], label: v => v + " " + groupName[v], sortByLabel: true },
   { k: "chk", name: "Prüfung", vals: r => r.c, label: v => v + (trial.has(v) ? " (Probe)" : ""), top: 6 },
   { k: "iso", name: "ISO/IEC 27001", vals: r => r.iso.map(x => x.id), label: v => "A." + v, top: 6 },
@@ -323,6 +356,8 @@ function detailReq(id) {
     <div class="status"><span class="s">${glyph(id)} ${ST[r.st]}</span><span>${r.m ? "durch Prüfung gemessen" : "nicht gemessen"}</span>${statusPlan}<span class="small">${esc(r.mv)} · ${esc(r.lvl)}</span></div>
     <p class="lead">${esc(r.stm).replace(/\b(MUSS|SOLLTE|KANN)\b/, '<span class="mv">$1</span>')}</p>
     ${r.gdn ? `<details class="hint"><summary>Umsetzungshinweise des BSI</summary><p>${esc(r.gdn)}</p></details>` : ""}
+    ${r.rm ? `<div class="small">Grundlage: ${esc(BASIS[r.b] || r.b)}. ${esc(r.rm)}</div>` : ""}
+    <div class="sec"><h2>Verlauf <span>${NR} Läufe</span></h2>${histDetail(id)}</div>
     <div class="sec"><h2>Belege <span>${r.c.length} Prüfung${r.c.length === 1 ? "" : "en"}</span></h2>${checks}</div>
     <div class="sec"><h2>Maßnahmenplan</h2>${plan}</div>
     <div class="sec"><h2>Bezüge im Katalog <span>${nrel}</span></h2>${nrel ? "" : `<span class="none">Der Katalog nennt keine Bezüge.</span>`}<div class="kv">
@@ -334,15 +369,28 @@ function detailReq(id) {
       ${r.thr.map(t => pivotRow("thr", t, t, THREAT[t] || "")).join("")}
     </div>
     <div class="sec"><h2>Nachweis</h2><div>${esc(r.doc || "nicht angegeben")}</div></div>
-    <div class="src">Text, Hinweise und Bezüge: <a href="${CATURL}" target="_blank" rel="noopener">Grundschutz++-Katalog @ ${D.catalog.slice(0,7)}</a>. Normen: BSI-Mapping ISO 27001 zu Grundschutz++. Stand, Prüfungen und Maßnahmen: Lauf ${D.run.id}.</div>`;
+    <div class="src">Text, Hinweise und Bezüge: ${catLink()}. Normen: Mapping ISO 27001 zu Grundschutz++. Stand, Prüfungen und Maßnahmen: Lauf vom ${runLabel(NR - 1)}.</div>`;
+}
+const catLink = () => CATURL ? `<a href="${esc(CATURL)}" target="_blank" rel="noopener">Grundschutz++-Katalog @ ${esc(D.catalog.slice(0,7))}</a>` : `Katalog ${esc(D.catalog.slice(0,12))}`;
+function histDetail(id) {
+  if (!NR) return `<span class="none">Keine Läufe.</span>`;
+  const steps = [];
+  for (let k = 1; k < NR; k++) if (hst(id, k) !== hst(id, k - 1)) {
+    const [s0, f0] = hst(id, k - 1), [s1, f1] = hst(id, k);
+    const what = [s0 !== s1 ? `Stand ${ST[s0]} → ${ST[s1]}` : "", f0 !== f1 ? `Messung ${FOUND[f0]} → ${FOUND[f1]}` : ""].filter(Boolean).join(", ");
+    steps.push(`<div><span class="num">${esc(runLabel(k))}</span> ${esc(what)}</div>`);
+  }
+  return `<div class="hx" aria-label="Verlauf, ältester Lauf links">${RUNS.map((_, k) => hcell(id, k)).join("")}</div>` +
+    (steps.length ? steps.reverse().join("") : `<span class="none">Seit ${esc(runLabel(0))} unverändert.</span>`);
 }
 function detailExt(id) {
   const e = D.ext[id];
   const back = IDS.filter(i => [R[i].p, ...R[i].k, ...R[i].req, ...R[i].reqBy, ...R[i].rel].includes(id));
   const isoBack = Object.entries(D.iso).filter(([, ts]) => ts.some(t => t.id === id)).map(([x]) => x);
   return `<h1><span class="id">${esc(id)}</span>${esc(e.t)}</h1>
-    <div class="status"><span class="pill">nicht im Profil</span></div>
+    <div class="status"><span class="pill">${D.na[id] !== undefined ? "nicht anwendbar" : "nicht im Profil"}</span></div>
     <p class="lead">${esc(e.stm)}</p>
+    ${D.na[id] ? `<div class="sec"><h2>Begründung</h2><div>${esc(D.na[id])}</div></div>` : ""}
     <div class="sec"><h2>Warum sie hier auftaucht</h2><div class="kv">${items(back, "Bezug aus dem Profil")}${e.p ? items([e.p], "Gehört zu") : ""}
     ${isoBack.length ? `<div class="k">Gleiche Norm</div><div class="v">${isoBack.map(x => pivotRow("iso", x, "ISO A." + x, "Profil-Anforderungen zum selben Control")).join("")}</div>` : ""}</div></div>
     <div class="src">Für Anforderungen außerhalb des Profils gibt es keinen Stand, keine Prüfung und keinen Maßnahmenplan.</div>`;
@@ -351,7 +399,8 @@ function detailStart() {
   const c = k => IDS.filter(i => R[i].st === k).length, od = IDS.filter(i => planKey(i) === "od"), na = IDS.filter(i => planKey(i) === "na");
   const meas = IDS.filter(i => R[i].m).length;
   return `<div class="start">
-    <h1>Lauf ${D.run.id}</h1>
+    <h1>Stand vom ${de(D.run.date)} ${esc(D.run.time)}</h1>
+    ${D.warnings && D.warnings.length ? D.warnings.map(w => `<p class="warn">${esc(w)}</p>`).join("") : ""}
     <p>${c("I")} von ${IDS.length} Anforderungen sind umgesetzt, ${c("P")} teilweise und ${c("L")} geplant. ${meas} sind durch eine Prüfung gemessen.</p>
     <p class="small">Suche oben nach Kennung, Titel oder Text. Ein Klick in der Liste öffnet die Akte. In der Akte öffnet ein Klick auf einen Bezug dessen Akte; „alle zeigen“ legt Prüfung, Norm, Gefährdung oder Praxis als Filter auf die Liste.</p>
     <div class="go">
@@ -359,7 +408,29 @@ function detailStart() {
       <button type="button" data-preset="na"><span>Im Plan, aber ohne Maßnahme</span><span class="num">${na.length}</span></button>
       <button type="button" data-preset="unmeasured"><span>Umgesetzt, aber nicht gemessen</span><span class="num">${IDS.filter(i => R[i].st === "I" && !R[i].m).length}</span></button>
       <button type="button" data-preset="L"><span>Nur geplant</span><span class="num">${c("L")}</span></button>
-    </div></div>`;
+      ${NR > 1 ? `<button type="button" data-preset="neu"><span>Seit dem letzten Lauf nicht mehr erfüllt</span><span class="num bad">${IDS.filter(i => histKey(i) === "neu").length}</span></button>` : ""}
+    </div>
+    ${runsTable()}
+    ${sourcesList()}
+    </div>`;
+}
+function runsTable() {
+  if (!NR) return "";
+  const rows = [];
+  for (let k = NR - 1; k >= 0 && rows.length < 60; k--) {
+    const r = RUNS[k], ch = changes(k);
+    const link = r.job ? `<a href="${esc(r.job)}" target="_blank" rel="noopener">${esc(runLabel(k))}</a>` : esc(runLabel(k));
+    rows.push(`<span class="num" title="${esc(r.dir)}">${link}</span><span class="num">${r.plan ? `${r.i} / ${r.p} / ${r.l}` : "ohne Plan"}</span><span class="num"><span>${r.s}</span> · <span class="${r.n ? "bad" : ""}">${r.n}</span></span>` +
+      `<span class="ch">${k === 0 ? `<span class="small">erster Lauf</span>` : ch.length ? ch.slice(0, 12).map(i => `<button type="button" data-open="${esc(i)}" title="${esc(hst(i, k - 1) + " → " + hst(i, k))}">${esc(i)}</button>`).join("") + (ch.length > 12 ? `<span class="small">und ${ch.length - 12} weitere</span>` : "") : `<span class="small">keine Änderung</span>`}</span>`);
+  }
+  return `<div class="sec"><h2>Verlauf <span>${NR} Läufe, neuester oben</span></h2>
+    <div class="runs"><span class="h">Lauf</span><span class="h" title="umgesetzt / teilweise / geplant">Stand</span><span class="h" title="erfüllt · nicht erfüllt">Messung</span><span class="h">Änderungen</span>${rows.join("")}</div></div>`;
+}
+function sourcesList() {
+  if (!D.sources || !D.sources.length) return "";
+  return `<details class="hint"><summary>Woher die Daten kommen: ${D.sources.length} Importe, ${D.sources.filter(s => s.state === "verified").length} mit passender Prüfsumme</summary><div class="srcs">` +
+    D.sources.map(s => `<div><span class="st ${s.state === "mismatch" || s.state === "missing" ? "bad" : ""}">${esc(SRCST[s.state] || s.state)}</span> ${esc(s.from)}${s.n > 1 ? ` (und ${s.n - 1} weitere)` : ""} → ${esc(s.to || s.href)}${s.remote ? " (geladen)" : ""}</div>`).join("") +
+    `</div></details>`;
 }
 function renderDetail() {
   const id = state.cur, el = document.getElementById("detail");
@@ -387,7 +458,7 @@ function openId(id, push = true) {
 }
 
 // Ereignisse
-document.getElementById("meta").innerHTML = `<span>Lauf ${D.run.id}</span><span>${de(D.run.date)} ${D.run.time}</span><span>Commit ${D.run.sha}</span><span>Katalog ${D.catalog.slice(0,7)}</span>`;
+document.getElementById("meta").innerHTML = [`<span>Stand ${de(D.run.date)} ${esc(D.run.time)}</span>`, NR > 1 ? `<span>${NR} Läufe seit ${de(RUNS[0].d)}</span>` : "", D.run.sha ? `<span>Commit ${esc(D.run.sha)}</span>` : "", `<span>Katalog ${esc(D.catalog.slice(0,7))}</span>`].join("");
 document.getElementById("proj").textContent = D.run.project;
 const qEl = document.getElementById("q");
 qEl.addEventListener("input", () => { state.q = qEl.value; renderBar(results().length); renderFacets(); renderList(); });
@@ -421,7 +492,7 @@ document.addEventListener("click", e => {
   if (pr) {
     const k = pr.dataset.preset;
     state.q = ""; qEl.value = "";
-    state.sel = k === "od" ? { plan: ["od"] } : k === "na" ? { plan: ["na"] } : k === "unmeasured" ? { st: ["I"], m: ["nein"] } : { st: ["L"] };
+    state.sel = k === "od" ? { plan: ["od"] } : k === "na" ? { plan: ["na"] } : k === "unmeasured" ? { st: ["I"], m: ["nein"] } : k === "neu" ? { hx: ["neu"] } : { st: ["L"] };
     save(); render(); return;
   }
   const a = t.closest('.trail a[href^="#"]');
