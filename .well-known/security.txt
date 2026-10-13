@@ -1,0 +1,6 @@
+Contact: mailto:security@ole-hartwig.eu
+Expires: 2027-09-01T00:00:00Z
+Encryption: https://ole-hartwig.eu/.well-known/csaf/openpgp-key.asc
+Preferred-Languages: de, en
+Canonical: https://ole-hartwig.eu/.well-known/security.txt
+CSAF: https://ole-hartwig.eu/.well-known/csaf/provider-metadata.json

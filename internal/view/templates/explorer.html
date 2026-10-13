@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="de">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grundschutz++ Explorer</title>
+<style>
+/* Layout: Explorer. Oben die Suche, darunter drei Spalten: Filter mit Zählern, Trefferliste, Akte. Bezüge in der Akte öffnen den Eintrag; Prüfung, Norm, Gefährdung und Praxis lassen sich als Filter auf die Liste legen, ohne die Akte zu verlassen. */
+:root {
+  --paper: #f5f6f7;
+  --sheet: #ffffff;
+  --ink: #17212b;
+  --ink2: #48535e;
+  --ink3: #6a7480;
+  --rule: #d5dae0;
+  --rule2: #e9ecef;
+  --hover: #eef2f5;
+  --link: #1b5a88;
+  --sel: #1b5a88;
+  --selbg: #e6eff6;
+  --mark: #17212b;
+  --bad: #b3261e;
+  --warn: #9a5800;
+  --code: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --text: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --head: "IBM Plex Sans Condensed", "Arial Narrow", "IBM Plex Sans", sans-serif;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --paper: #11161b; --sheet: #172028; --ink: #e2e7eb; --ink2: #a9b3bd; --ink3: #87929d; --rule: #2d3944; --rule2: #222d37; --hover: #1d2832;
+  --link: #8cc2ec; --sel: #8cc2ec; --selbg: #1e3346; --mark: #dbe3ea; --bad: #ff8a80; --warn: #f0b35a; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --paper: #11161b; --sheet: #172028; --ink: #e2e7eb; --ink2: #a9b3bd; --ink3: #87929d; --rule: #2d3944; --rule2: #222d37; --hover: #1d2832;
+  --link: #8cc2ec; --sel: #8cc2ec; --selbg: #1e3346; --mark: #dbe3ea; --bad: #ff8a80; --warn: #f0b35a; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { background: var(--paper); color: var(--ink); font-family: var(--text); font-size: 14.5px; line-height: 1.45; }
+button { font: inherit; color: inherit; }
+a { color: var(--link); text-underline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--sel); outline-offset: 1px; }
+.id { font-family: var(--code); font-weight: 500; font-size: .92em; white-space: nowrap; }
+.num { font-variant-numeric: tabular-nums; }
+.small { font-size: 12.5px; color: var(--ink3); }
+
+.app { height: 100%; display: flex; flex-direction: column; max-width: 1600px; margin: 0 auto; padding-inline: 16px; }
+header.top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; padding-block: 12px 10px; border-bottom: 2px solid var(--ink); }
+.brand { font-family: var(--head); font-weight: 600; font-size: 19px; white-space: nowrap; }
+.brand span { color: var(--ink3); font-weight: 500; }
+.search { flex: 1 1 360px; display: flex; align-items: center; gap: 8px; background: var(--sheet); border: 1px solid var(--rule); padding: 0 10px; min-height: 40px; }
+.search:focus-within { border-color: var(--sel); box-shadow: 0 0 0 1px var(--sel); }
+.search input { flex: 1; min-width: 0; border: 0; background: transparent; font: inherit; font-size: 15px; color: var(--ink); padding: 8px 0; outline: none; }
+.search kbd { font-family: var(--code); font-size: 11px; color: var(--ink3); border: 1px solid var(--rule); padding: 0 5px; }
+.runmeta { font-family: var(--code); font-size: 12px; color: var(--ink2); display: flex; flex-wrap: wrap; gap: 2px 14px; }
+
+.bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding-block: 10px; min-height: 48px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--rule); background: var(--sheet); padding: 3px 4px 3px 9px; font-size: 13px; }
+.chip b { font-weight: 500; color: var(--ink3); }
+.chip button { border: 0; background: none; cursor: pointer; width: 24px; height: 24px; display: grid; place-items: center; color: var(--ink3); }
+.chip button:hover { color: var(--ink); background: var(--hover); }
+.sugg { display: inline-flex; align-items: center; gap: 6px; border: 1px dashed var(--sel); background: transparent; padding: 3px 9px; font-size: 13px; cursor: pointer; color: var(--link); min-height: 30px; }
+.sugg:hover { background: var(--selbg); }
+.clear { border: 0; background: none; color: var(--link); cursor: pointer; text-decoration: underline; font-size: 13px; padding: 4px; }
+.count { font-size: 13px; color: var(--ink2); margin-right: 6px; }
+
+.cols { flex: 1; min-height: 0; display: grid; grid-template-columns: 250px minmax(300px, 1fr) minmax(380px, 1.25fr); gap: 0; border-top: 1px solid var(--rule); }
+.pane { min-height: 0; overflow: auto; }
+.facets { padding: 12px 16px 24px 0; border-right: 1px solid var(--rule); display: flex; flex-direction: column; gap: 16px; }
+.listp { border-right: 1px solid var(--rule); background: var(--sheet); display: flex; flex-direction: column; }
+.detail { background: var(--sheet); }
+
+/* Filter */
+.fg h3 { margin: 0 0 4px; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); }
+.fv { width: 100%; display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 8px; align-items: center; text-align: left; border: 0; background: none; padding: 4px 6px; cursor: pointer; min-height: 30px; font-size: 13.5px; }
+.fv:hover { background: var(--hover); }
+.fv .box { width: 13px; height: 13px; border: 1.5px solid var(--ink3); display: inline-block; }
+.fv[aria-pressed="true"] { background: var(--selbg); }
+.fv[aria-pressed="true"] .box { background: var(--sel); border-color: var(--sel); box-shadow: inset 0 0 0 2px var(--selbg); }
+.fv .l { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fv .n { font-size: 12px; color: var(--ink3); font-variant-numeric: tabular-nums; }
+.fv[disabled] { opacity: .4; cursor: default; }
+.more { border: 0; background: none; color: var(--link); cursor: pointer; font-size: 12.5px; padding: 4px 6px; }
+
+/* Liste */
+.lhead { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--rule); position: sticky; top: 0; background: var(--sheet); z-index: 1; }
+.lhead label { font-size: 12.5px; color: var(--ink3); display: flex; gap: 6px; align-items: center; }
+.lhead select { font: inherit; font-size: 13px; color: var(--ink); background: var(--sheet); border: 1px solid var(--rule); padding: 3px 6px; }
+.rows { list-style: none; margin: 0; padding: 0; outline: none; }
+.row { display: grid; grid-template-columns: 18px minmax(0, 1fr); gap: 10px; padding: 9px 12px; border-bottom: 1px solid var(--rule2); cursor: pointer; }
+.row:hover { background: var(--hover); }
+.row[aria-selected="true"] { background: var(--selbg); box-shadow: inset 3px 0 0 var(--sel); }
+.row .t1 { display: flex; gap: 8px; align-items: baseline; min-width: 0; }
+.row .t1 .tt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.row .t2 { font-size: 12.5px; color: var(--ink3); display: flex; flex-wrap: wrap; gap: 2px 10px; }
+.empty { padding: 24px 16px; color: var(--ink2); }
+
+/* Zeichen für den Stand: Form trägt die Bedeutung */
+.sq { --s: 13px; width: var(--s); height: var(--s); border: 1.5px solid var(--mark); display: inline-block; position: relative; flex: none; margin-top: 3px; }
+.sq.I { background: var(--mark); }
+.sq.P { background: linear-gradient(135deg, var(--mark) 0 50%, transparent 50% 100%); }
+.sq.m::after { content: ""; position: absolute; inset: 0; margin: auto; width: 4px; height: 4px; border-radius: 50%; background: var(--sheet); }
+.sq.L.m::after, .sq.P.m::after { background: var(--mark); }
+.sq.od { border-color: var(--bad); box-shadow: 0 0 0 1px var(--bad); }
+
+/* Akte */
+.dwrap { padding: 18px 22px 32px; display: flex; flex-direction: column; gap: 16px; }
+.dnav { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink3); }
+.back { border: 1px solid var(--rule); background: var(--sheet); cursor: pointer; padding: 3px 9px; font-size: 12.5px; min-height: 28px; }
+.back:hover { background: var(--hover); }
+.trail a { color: var(--ink3); }
+.trail a + a::before, .trail span + a::before { content: "›"; margin: 0 6px; color: var(--rule); }
+h1 { margin: 0; font-family: var(--head); font-weight: 600; font-size: 25px; line-height: 1.15; text-wrap: balance; }
+h1 .id { display: block; font-size: 14px; color: var(--ink2); margin-bottom: 2px; }
+.status { display: flex; flex-wrap: wrap; gap: 6px 14px; align-items: center; font-size: 13.5px; }
+.status .s { display: inline-flex; gap: 6px; align-items: center; }
+.pill { font-size: 12px; padding: 1px 7px; border: 1px solid currentColor; }
+.lead { margin: 0; font-size: 15.5px; max-width: 70ch; }
+.lead .mv { font-weight: 600; letter-spacing: .04em; font-size: .9em; }
+details.hint summary { cursor: pointer; font-size: 13px; color: var(--link); }
+details.hint p { margin: 6px 0 0; color: var(--ink2); font-size: 14px; max-width: 72ch; }
+.sec { border-top: 1px solid var(--rule); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+.sec h2 { margin: 0; font-size: 12px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink3); display: flex; gap: 8px; align-items: baseline; }
+.sec h2 span { font-weight: 400; letter-spacing: 0; text-transform: none; }
+.kv { display: grid; grid-template-columns: 132px minmax(0, 1fr); gap: 4px 12px; align-items: start; }
+.kv > .k { font-size: 12.5px; color: var(--ink3); padding-top: 5px; }
+.kv > .v { min-width: 0; display: flex; flex-direction: column; }
+.item { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 8px; align-items: start; width: 100%; text-align: left; border: 0; background: none; padding: 4px 6px; margin-left: -6px; cursor: pointer; min-height: 30px; }
+.item:hover { background: var(--hover); }
+.item .tx { min-width: 0; }
+.item .tx .tt { color: var(--ink); }
+.item .q { font-size: 12px; color: var(--ink3); white-space: nowrap; padding-top: 2px; }
+.item.ext .id { color: var(--ink2); }
+.pv { display: flex; align-items: center; gap: 4px; }
+.pv .item { flex: 1; }
+.flt { border: 1px solid var(--rule); background: var(--sheet); cursor: pointer; font-size: 12px; padding: 2px 8px; color: var(--link); white-space: nowrap; min-height: 26px; }
+.flt:hover { background: var(--selbg); border-color: var(--sel); }
+.none { color: var(--ink3); font-size: 13.5px; padding: 4px 0; }
+.bad { color: var(--bad); }
+.warn { color: var(--warn); }
+.tag { font-family: var(--code); font-size: 11px; border: 1px solid var(--rule); padding: 0 5px; color: var(--ink2); white-space: nowrap; }
+.act { padding: 2px 0; }
+.hx { display: flex; flex-wrap: wrap; gap: 3px; align-items: center; }
+.hx .sq { margin-top: 0; }
+.sq.nf { border-color: var(--bad); }
+.sq.nf::after { content: ""; position: absolute; inset: 0; margin: auto; width: 5px; height: 5px; background: var(--bad); }
+.runs { display: grid; grid-template-columns: auto auto auto minmax(0, 1fr); gap: 2px 14px; font-size: 13px; align-items: baseline; }
+.runs .h { font-size: 12px; color: var(--ink3); }
+.runs .ch { display: flex; flex-wrap: wrap; gap: 2px 8px; }
+.runs .ch button { border: 0; background: none; padding: 0; color: var(--link); cursor: pointer; font: inherit; }
+.srcs { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--ink2); }
+.srcs .st { display: inline-block; min-width: 9ch; }
+.src { font-size: 12px; color: var(--ink3); border-top: 1px solid var(--rule2); padding-top: 10px; }
+.start { display: flex; flex-direction: column; gap: 14px; max-width: 60ch; }
+.start p { margin: 0; }
+.start .go { display: flex; flex-direction: column; gap: 6px; }
+.start .go button { text-align: left; border: 1px solid var(--rule); background: var(--sheet); padding: 8px 12px; cursor: pointer; display: flex; justify-content: space-between; gap: 12px; }
+.start .go button:hover { background: var(--hover); border-color: var(--ink3); }
+.mtoggle { display: none; }
+
+@media (max-width: 1100px) {
+  .cols { grid-template-columns: 220px minmax(0, 1fr); }
+  .detail { grid-column: 1 / -1; border-top: 1px solid var(--rule); }
+  .app { height: auto; }
+  .pane { overflow: visible; }
+}
+@media (max-width: 720px) {
+  .cols { grid-template-columns: minmax(0, 1fr); }
+  .facets { border-right: 0; padding-right: 0; }
+  .facets.closed .fg { display: none; }
+  .mtoggle { display: block; border: 1px solid var(--rule); background: var(--sheet); padding: 8px 12px; cursor: pointer; text-align: left; }
+  .listp { border-right: 0; max-height: 60vh; overflow: auto; }
+  .kv { grid-template-columns: minmax(0, 1fr); }
+  .kv > .k { padding-top: 6px; }
+}
+</style>
+
+<div class="app" lang="de">
+  <header class="top">
+    <div class="brand">Grundschutz++ <span id="proj"></span></div>
+    <label class="search" for="q">
+      <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.5"></circle><path d="M11 11l3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>
+      <input id="q" type="search" autocomplete="off" placeholder="Kennung, Titel, Text, Prüfung, ISO-Control oder Gefährdung" aria-label="Suchen">
+      <kbd>/</kbd>
+    </label>
+    <div class="runmeta" id="meta"></div>
+  </header>
+  <div class="bar" id="bar" aria-live="polite"></div>
+  <div class="cols">
+    <aside class="pane facets closed" id="facets" aria-label="Filter"></aside>
+    <section class="pane listp" aria-label="Treffer">
+      <div class="lhead">
+        <span class="small" id="lcount"></span>
+        <label for="sort">Sortieren <select id="sort">
+          <option value="id">nach Kennung</option>
+          <option value="due">nach Termin</option>
+          <option value="st">nach Stand</option>
+        </select></label>
+      </div>
+      <ul class="rows" id="rows" role="listbox" tabindex="0" aria-label="Anforderungen"></ul>
+    </section>
+    <section class="pane detail" id="detail" aria-label="Akte" tabindex="-1"></section>
+  </div>
+</div>
+
+<script>
+const D = /*__DATA__*/null;
+const THREAT = {"G 0.1":"Feuer","G 0.2":"Ungünstige klimatische Bedingungen","G 0.3":"Wasser","G 0.4":"Verschmutzung, Staub, Korrosion","G 0.5":"Naturkatastrophen","G 0.6":"Katastrophen im Umfeld","G 0.7":"Großereignisse im Umfeld","G 0.8":"Ausfall oder Störung der Stromversorgung","G 0.9":"Ausfall oder Störung von Kommunikationsnetzen","G 0.10":"Ausfall oder Störung von Versorgungsnetzen","G 0.11":"Ausfall oder Störung von Dienstleistern","G 0.12":"Elektromagnetische Störstrahlung","G 0.13":"Abfangen kompromittierender Strahlung","G 0.14":"Ausspähen von Informationen (Spionage)","G 0.15":"Abhören","G 0.16":"Diebstahl von Geräten, Datenträgern oder Dokumenten","G 0.17":"Verlust von Geräten, Datenträgern oder Dokumenten","G 0.18":"Fehlplanung oder fehlende Anpassung","G 0.19":"Offenlegung schützenswerter Informationen","G 0.20":"Informationen oder Produkte aus unzuverlässiger Quelle","G 0.21":"Manipulation von Hard- oder Software","G 0.22":"Manipulation von Informationen","G 0.23":"Unbefugtes Eindringen in IT-Systeme","G 0.24":"Zerstörung von Geräten oder Datenträgern","G 0.25":"Ausfall von Geräten oder Systemen","G 0.26":"Fehlfunktion von Geräten oder Systemen","G 0.27":"Ressourcenmangel","G 0.28":"Software-Schwachstellen oder -Fehler","G 0.29":"Verstoß gegen Gesetze oder Regelungen","G 0.30":"Unberechtigte Nutzung oder Administration von Geräten und Systemen","G 0.31":"Fehlerhafte Nutzung oder Administration von Geräten und Systemen","G 0.32":"Missbrauch von Berechtigungen","G 0.33":"Personalausfall","G 0.34":"Anschlag","G 0.35":"Nötigung, Erpressung oder Korruption","G 0.36":"Identitätsdiebstahl","G 0.37":"Abstreiten von Handlungen","G 0.38":"Missbrauch personenbezogener Daten","G 0.39":"Schadprogramme","G 0.40":"Verhinderung von Diensten (Denial of Service)","G 0.41":"Sabotage","G 0.42":"Social Engineering","G 0.43":"Einspielen von Nachrichten","G 0.44":"Unbefugtes Eindringen in Räumlichkeiten","G 0.45":"Datenverlust","G 0.46":"Integritätsverlust schützenswerter Informationen","G 0.47":"Schädliche Seiteneffekte IT-gestützter Angriffe"};
+const ISO_THEME = {"5":"Organisatorisch","6":"Personell","7":"Physisch","8":"Technologisch"};
+const REL = {"equivalent-to":"gleichwertig","subset-of":"Teilmenge","intersects-with":"überschneidend","superset-of":"Obermenge"};
+const ST = {I: "umgesetzt", P: "teilweise", L: "geplant", "-": "ohne Angabe"};
+const CATURL = D.catalogUrl;
+const BASIS = {measured: "gemessen", claimed: "zugesichert", reviewed: "Bewertung von Hand", none: "ohne Grundlage"};
+const FOUND = {s: "erfüllt", n: "nicht erfüllt", "-": "nicht gemessen"};
+const SRCST = {verified: "geprüft", unhashed: "ohne Prüfsumme", nearby: "im selben Lauf", mismatch: "Prüfsumme weicht ab", missing: "fehlt"};
+const RUNS = D.runs, NR = RUNS.length;
+// Verlauf: Stand und Messung je Lauf, "In" = umgesetzt, nicht erfüllt
+const hst = (id, k) => R[id].h[k] || "--";
+const runLabel = k => de(RUNS[k].d) + " " + RUNS[k].t;
+const hcell = (id, k) => { const [s, f] = hst(id, k); return `<i class="sq ${s}${f === "s" ? " m" : ""}${f === "n" ? " nf" : ""}" title="${esc(runLabel(k) + ": " + ST[s] + ", " + FOUND[f])}"></i>`; };
+const histKey = id => {
+  if (NR < 2) return "eins";
+  const h = R[id].h, last = h[NR - 1], changed = h.some(x => x !== last);
+  if (last[1] === "n" && h.slice(0, -1).every(x => x[1] !== "n")) return "neu";
+  if (last[1] === "n") return "rot";
+  return changed ? "wechselnd" : "stabil";
+};
+const HIST = {neu: "neu nicht erfüllt", rot: "weiter nicht erfüllt", wechselnd: "hat sich verändert", stabil: "unverändert", eins: "nur ein Lauf"};
+// Was sich von Lauf k-1 zu k verändert hat
+const changes = k => k === 0 ? [] : IDS.filter(i => hst(i, k) !== hst(i, k - 1));
+
+const R = D.reqs, IDS = D.order, TODAY = D.run.date;
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"})[c]);
+const de = d => d ? d.slice(8,10) + "." + d.slice(5,7) + "." + d.slice(0,4) : "";
+const byNum = (a, b) => a.localeCompare(b, "de", { numeric: true });
+const checkDef = new Map(D.checks.map(c => [c.id, c]));
+const trial = new Set(D.trial);
+const planKey = id => { const p = R[id].poam; if (!p) return "kein"; if (p.na) return "na"; if (p.dl && p.dl < TODAY) return "od"; return "dl"; };
+const glyph = id => { const r = R[id]; return r ? `<i class="sq ${r.st}${r.m ? " m" : ""}${planKey(id) === "od" ? " od" : ""}" aria-hidden="true"></i>` : `<i aria-hidden="true"></i>`; };
+const groupName = {}; IDS.forEach(i => groupName[R[i].g] = R[i].gt);
+const PLAN = {od: "Termin überschritten", dl: "Maßnahme mit Termin", na: "im Plan ohne Maßnahme", kein: "nicht im Plan"};
+
+// Filterdimensionen: jede liefert die Werte einer Anforderung und eine Beschriftung
+const F = [
+  { k: "st", name: "Stand", vals: r => [r.st], label: v => ST[v], order: ["I", "P", "L"] },
+  { k: "plan", name: "Maßnahmenplan", vals: (r, id) => [planKey(id)], label: v => PLAN[v], order: ["od", "dl", "na", "kein"] },
+  { k: "m", name: "Messung", vals: r => [r.m ? "ja" : "nein"], label: v => v === "ja" ? "gemessen" : "nicht gemessen", order: ["ja", "nein"] },
+  { k: "hx", name: "Verlauf", vals: (r, id) => [histKey(id)], label: v => HIST[v], order: ["neu", "rot", "wechselnd", "stabil", "eins"] },
+  { k: "g", name: "Praxis", vals: r => [r.g], label: v => v + " " + groupName[v], sortByLabel: true },
+  { k: "chk", name: "Prüfung", vals: r => r.c, label: v => v + (trial.has(v) ? " (Probe)" : ""), top: 6 },
+  { k: "iso", name: "ISO/IEC 27001", vals: r => r.iso.map(x => x.id), label: v => "A." + v, top: 6 },
+  { k: "thr", name: "Gefährdung", vals: r => r.thr, label: v => v + " " + (THREAT[v] || ""), top: 6 },
+  { k: "mv", name: "Verbindlichkeit", vals: r => [r.mv], label: v => v, order: ["MUSS", "SOLLTE", "KANN"] },
+];
+const FBY = Object.fromEntries(F.map(f => [f.k, f]));
+const state = { q: "", sel: {}, open: {}, sort: "id", cur: null, hist: [] };
+try { const s = JSON.parse(localStorage.getItem("gsx-state") || "{}"); if (s.sel) state.sel = s.sel; if (s.sort) state.sort = s.sort; } catch (e) {}
+const save = () => { try { localStorage.setItem("gsx-state", JSON.stringify({ sel: state.sel, sort: state.sort })); } catch (e) {} };
+
+// Suche: jedes Wort muss irgendwo vorkommen (Kennung, Titel, Text, Prüfung, Norm, Gefährdung, Maßnahme)
+const hay = {};
+IDS.forEach(i => { const r = R[i]; hay[i] = [i, r.t, r.stm, r.doc, r.gt, r.c.join(" "), r.iso.map(x => "a." + x.id + " " + x.id).join(" "), r.thr.map(t => t + " " + (THREAT[t] || "")).join(" "), r.poam ? r.poam.a.map(a => a.id + " " + a.x).join(" ") : ""].join(" ").toLowerCase(); });
+const words = () => state.q.toLowerCase().split(/\s+/).filter(Boolean);
+const matchQ = i => words().every(w => hay[i].includes(w));
+const matchF = (i, except) => F.every(f => { if (f.k === except) return true; const s = state.sel[f.k]; if (!s || !s.length) return true; const v = f.vals(R[i], i); return s.some(x => v.includes(x)); });
+const results = () => IDS.filter(i => matchQ(i) && matchF(i));
+
+function toggle(k, v, on) {
+  const s = new Set(state.sel[k] || []);
+  if (on === undefined ? s.has(v) : !on) s.delete(v); else s.add(v);
+  state.sel[k] = [...s]; save(); render();
+}
+function pivot(k, v) { state.sel = { [k]: [v] }; state.q = ""; document.getElementById("q").value = ""; save(); render(); }
+
+// Treffer in Prüfungen, Normen, Gefährdungen als Vorschlag zum Filtern
+function suggestions() {
+  const ws = words(); if (!ws.length) return [];
+  const out = [], hit = s => ws.every(w => s.toLowerCase().includes(w));
+  [...checkDef.keys(), ...trial].forEach(c => { if (hit(c + " " + (checkDef.get(c)?.t || ""))) out.push(["chk", c, "Prüfung " + c]); });
+  Object.keys(D.iso).forEach(x => { if (hit("a." + x + " a" + x)) out.push(["iso", x, "ISO A." + x]); });
+  Object.keys(THREAT).forEach(t => { if (IDS.some(i => R[i].thr.includes(t)) && hit(t + " " + THREAT[t])) out.push(["thr", t, t + " " + THREAT[t]]); });
+  Object.keys(groupName).forEach(g => { if (hit(g + " " + groupName[g])) out.push(["g", g, "Praxis " + g + " " + groupName[g]]); });
+  return out.slice(0, 6);
+}
+
+function renderBar(n) {
+  const chips = [];
+  F.forEach(f => (state.sel[f.k] || []).forEach(v => chips.push(`<span class="chip"><b>${esc(f.name)}</b> ${esc(f.label(v))}<button type="button" data-rm="${f.k}" data-v="${esc(v)}" aria-label="Filter ${esc(f.label(v))} entfernen">✕</button></span>`)));
+  const sug = suggestions().map(([k, v, l]) => `<button type="button" class="sugg" data-piv="${k}" data-v="${esc(v)}">Nur ${esc(l)} zeigen</button>`);
+  document.getElementById("bar").innerHTML = `<span class="count num">${n} von ${IDS.length} Anforderungen</span>` + chips.join("") + sug.join("") +
+    (chips.length || state.q ? `<button type="button" class="clear" id="clearall">Alles zurücksetzen</button>` : "");
+}
+function renderFacets() {
+  const el = document.getElementById("facets");
+  const closed = el.classList.contains("closed");
+  const nsel = F.reduce((a, f) => a + (state.sel[f.k] || []).length, 0);
+  let h = `<button type="button" class="mtoggle" id="mtoggle" aria-expanded="${!closed}">Filter${nsel ? " (" + nsel + " aktiv)" : ""}</button>`;
+  F.forEach(f => {
+    const base = IDS.filter(i => matchQ(i) && matchF(i, f.k));
+    const cnt = new Map();
+    base.forEach(i => f.vals(R[i], i).forEach(v => cnt.set(v, (cnt.get(v) || 0) + 1)));
+    let vals = f.order ? f.order.slice() : [...cnt.keys()];
+    if (!f.order) vals.sort(f.sortByLabel ? byNum : (a, b) => (cnt.get(b) - cnt.get(a)) || byNum(a, b));
+    const sel = new Set(state.sel[f.k] || []);
+    sel.forEach(v => { if (!vals.includes(v)) vals.push(v); });
+    let shown = vals;
+    if (f.top && !state.open[f.k]) shown = vals.filter((v, ix) => ix < f.top || sel.has(v));
+    h += `<div class="fg"><h3>${esc(f.name)}</h3>` + shown.map(v => {
+      const n = cnt.get(v) || 0, on = sel.has(v);
+      return `<button type="button" class="fv" data-f="${f.k}" data-v="${esc(v)}" aria-pressed="${on}"${!n && !on ? " disabled" : ""} title="${esc(f.label(v))}"><i class="box"></i><span class="l">${esc(f.label(v))}</span><span class="n">${n}</span></button>`;
+    }).join("") + (f.top && vals.length > f.top ? `<button type="button" class="more" data-more="${f.k}">${state.open[f.k] ? "weniger" : "alle " + vals.length + " zeigen"}</button>` : "") + `</div>`;
+  });
+  el.innerHTML = h;
+}
+function sortList(list) {
+  const due = i => R[i].poam?.dl || "9999";
+  if (state.sort === "due") return list.sort((a, b) => due(a).localeCompare(due(b)) || byNum(a, b));
+  if (state.sort === "st") return list.sort((a, b) => "LPI".indexOf(R[a].st) - "LPI".indexOf(R[b].st) || byNum(a, b));
+  return list.sort(byNum);
+}
+let LIST = [];
+function renderList() {
+  LIST = sortList(results());
+  document.getElementById("lcount").textContent = LIST.length + " Treffer";
+  const ul = document.getElementById("rows");
+  if (!LIST.length) { ul.innerHTML = `<li class="empty">Keine Anforderung passt zu Suche und Filtern. Entferne oben einen Filter.</li>`; return; }
+  ul.innerHTML = LIST.map(i => {
+    const r = R[i], pk = planKey(i), p = r.poam;
+    const meta = [
+      `<span>${ST[r.st]}${r.m ? ", gemessen" : ""}</span>`,
+      r.c.length ? `<span>${r.c.length} Prüfung${r.c.length > 1 ? "en" : ""}</span>` : "",
+      pk === "od" ? `<span class="bad">Termin ${de(p.dl)} überschritten</span>` : pk === "dl" ? `<span>Termin ${de(p.dl)}</span>` : pk === "na" ? `<span class="warn">ohne Maßnahme</span>` : ""
+    ].join("");
+    return `<li class="row" role="option" id="opt-${esc(i)}" data-id="${esc(i)}" aria-selected="${i === state.cur}">${glyph(i)}<div style="min-width:0"><div class="t1"><span class="id">${esc(i)}</span><span class="tt">${esc(r.t)}</span></div><div class="t2">${meta}</div></div></li>`;
+  }).join("");
+}
+
+// Akte
+const item = (id, note) => {
+  const r = R[id], e = D.ext[id];
+  const t = r ? r.t : e ? e.t : "";
+  const q = note || (r ? ST[r.st] : e ? "nicht im Profil" : "");
+  const tip = r ? r.stm : e ? e.stm : "";
+  return `<button type="button" class="item${r ? "" : " ext"}" data-open="${esc(id)}" title="${esc(tip)}">${glyph(id)}<span class="tx"><span class="id">${esc(id)}</span> <span class="tt">${esc(t)}</span></span><span class="q">${esc(q)}</span></button>`;
+};
+const items = (ids, label) => !ids.length ? "" : `<div class="k">${label}</div><div class="v">${ids.map(i => item(i)).join("")}</div>`;
+const othersWith = (k, v) => IDS.filter(i => FBY[k].vals(R[i], i).includes(v)).length;
+const pivotRow = (k, v, main, sub, extra) => `<div class="pv"><div class="item" style="cursor:default"><i></i><span class="tx"><span class="id">${esc(main)}</span> <span class="tt">${esc(sub)}</span>${extra || ""}</span><span class="q"></span></div><button type="button" class="flt" data-piv="${k}" data-v="${esc(v)}" title="Liste auf diese Auswahl filtern">alle ${othersWith(k, v)} zeigen</button></div>`;
+
+function detailReq(id) {
+  const r = R[id], p = r.poam, pk = planKey(id);
+  const statusPlan = pk === "od" ? `<span class="pill bad">Termin ${de(p.dl)} überschritten</span>` : pk === "dl" ? `<span class="pill">Termin ${de(p.dl)}</span>` : pk === "na" ? `<span class="pill warn">ohne Maßnahme</span>` : "";
+  const checks = r.c.length ? r.c.map(c => pivotRow("chk", c, c, checkDef.get(c)?.t || "", trial.has(c) ? ' <span class="tag">auf Probe</span>' : "")).join("") : `<span class="none">Keine Prüfung belegt diese Anforderung.</span>`;
+  const plan = !p ? `<span class="none">Kein Punkt im Maßnahmenplan.</span>` : p.na ? `<span class="warn">Im Plan, aber ohne Maßnahme und ohne Termin.</span>` :
+    p.a.map(a => `<div class="act"><span class="id">${esc(a.id)}</span> ${esc(a.x)}</div>`).join("") + (p.dl ? `<div class="small${pk === "od" ? " bad" : ""}">Termin ${de(p.dl)}</div>` : "");
+  const nrel = [r.p].filter(Boolean).length + r.k.length + r.req.length + r.reqBy.length + r.rel.length;
+  return `
+    <h1><span class="id">${esc(id)}</span>${esc(r.t)}</h1>
+    <div class="status"><span class="s">${glyph(id)} ${ST[r.st]}</span><span>${r.m ? "durch Prüfung gemessen" : "nicht gemessen"}</span>${statusPlan}<span class="small">${esc(r.mv)} · ${esc(r.lvl)}</span></div>
+    <p class="lead">${esc(r.stm).replace(/\b(MUSS|SOLLTE|KANN)\b/, '<span class="mv">$1</span>')}</p>
+    ${r.gdn ? `<details class="hint"><summary>Umsetzungshinweise des BSI</summary><p>${esc(r.gdn)}</p></details>` : ""}
+    ${r.rm ? `<div class="small">Grundlage: ${esc(BASIS[r.b] || r.b)}. ${esc(r.rm)}</div>` : ""}
+    <div class="sec"><h2>Verlauf <span>${NR} Läufe</span></h2>${histDetail(id)}</div>
+    <div class="sec"><h2>Belege <span>${r.c.length} Prüfung${r.c.length === 1 ? "" : "en"}</span></h2>${checks}</div>
+    <div class="sec"><h2>Maßnahmenplan</h2>${plan}</div>
+    <div class="sec"><h2>Bezüge im Katalog <span>${nrel}</span></h2>${nrel ? "" : `<span class="none">Der Katalog nennt keine Bezüge.</span>`}<div class="kv">
+      ${items(r.p ? [r.p] : [], "Gehört zu")}${items(r.k, "Teilanforderungen")}${items(r.req, "Setzt voraus")}${items(r.reqBy, "Voraussetzung für")}${items(r.rel, "Verwandt")}
+    </div></div>
+    <div class="sec"><h2>Einordnung</h2>
+      ${pivotRow("g", r.g, r.g, r.gt + " · " + r.s + " " + r.stt)}
+      ${r.iso.length ? r.iso.map(x => pivotRow("iso", x.id, "ISO A." + x.id, ISO_THEME[x.id.split(".")[0]] + " · " + (REL[x.rel] || x.rel))).join("") : `<span class="none">Keine ISO-27001-Zuordnung im BSI-Mapping.</span>`}
+      ${r.thr.map(t => pivotRow("thr", t, t, THREAT[t] || "")).join("")}
+    </div>
+    <div class="sec"><h2>Nachweis</h2><div>${esc(r.doc || "nicht angegeben")}</div></div>
+    <div class="src">Text, Hinweise und Bezüge: ${catLink()}. Normen: Mapping ISO 27001 zu Grundschutz++. Stand, Prüfungen und Maßnahmen: Lauf vom ${runLabel(NR - 1)}.</div>`;
+}
+const catLink = () => CATURL ? `<a href="${esc(CATURL)}" target="_blank" rel="noopener">Grundschutz++-Katalog @ ${esc(D.catalog.slice(0,7))}</a>` : `Katalog ${esc(D.catalog.slice(0,12))}`;
+function histDetail(id) {
+  if (!NR) return `<span class="none">Keine Läufe.</span>`;
+  const steps = [];
+  for (let k = 1; k < NR; k++) if (hst(id, k) !== hst(id, k - 1)) {
+    const [s0, f0] = hst(id, k - 1), [s1, f1] = hst(id, k);
+    const what = [s0 !== s1 ? `Stand ${ST[s0]} → ${ST[s1]}` : "", f0 !== f1 ? `Messung ${FOUND[f0]} → ${FOUND[f1]}` : ""].filter(Boolean).join(", ");
+    steps.push(`<div><span class="num">${esc(runLabel(k))}</span> ${esc(what)}</div>`);
+  }
+  return `<div class="hx" aria-label="Verlauf, ältester Lauf links">${RUNS.map((_, k) => hcell(id, k)).join("")}</div>` +
+    (steps.length ? steps.reverse().join("") : `<span class="none">Seit ${esc(runLabel(0))} unverändert.</span>`);
+}
+function detailExt(id) {
+  const e = D.ext[id];
+  const back = IDS.filter(i => [R[i].p, ...R[i].k, ...R[i].req, ...R[i].reqBy, ...R[i].rel].includes(id));
+  const isoBack = Object.entries(D.iso).filter(([, ts]) => ts.some(t => t.id === id)).map(([x]) => x);
+  return `<h1><span class="id">${esc(id)}</span>${esc(e.t)}</h1>
+    <div class="status"><span class="pill">${D.na[id] !== undefined ? "nicht anwendbar" : "nicht im Profil"}</span></div>
+    <p class="lead">${esc(e.stm)}</p>
+    ${D.na[id] ? `<div class="sec"><h2>Begründung</h2><div>${esc(D.na[id])}</div></div>` : ""}
+    <div class="sec"><h2>Warum sie hier auftaucht</h2><div class="kv">${items(back, "Bezug aus dem Profil")}${e.p ? items([e.p], "Gehört zu") : ""}
+    ${isoBack.length ? `<div class="k">Gleiche Norm</div><div class="v">${isoBack.map(x => pivotRow("iso", x, "ISO A." + x, "Profil-Anforderungen zum selben Control")).join("")}</div>` : ""}</div></div>
+    <div class="src">Für Anforderungen außerhalb des Profils gibt es keinen Stand, keine Prüfung und keinen Maßnahmenplan.</div>`;
+}
+function detailStart() {
+  const c = k => IDS.filter(i => R[i].st === k).length, od = IDS.filter(i => planKey(i) === "od"), na = IDS.filter(i => planKey(i) === "na");
+  const meas = IDS.filter(i => R[i].m).length;
+  return `<div class="start">
+    <h1>Stand vom ${de(D.run.date)} ${esc(D.run.time)}</h1>
+    ${D.warnings && D.warnings.length ? D.warnings.map(w => `<p class="warn">${esc(w)}</p>`).join("") : ""}
+    <p>${c("I")} von ${IDS.length} Anforderungen sind umgesetzt, ${c("P")} teilweise und ${c("L")} geplant. ${meas} sind durch eine Prüfung gemessen.</p>
+    <p class="small">Suche oben nach Kennung, Titel oder Text. Ein Klick in der Liste öffnet die Akte. In der Akte öffnet ein Klick auf einen Bezug dessen Akte; „alle zeigen“ legt Prüfung, Norm, Gefährdung oder Praxis als Filter auf die Liste.</p>
+    <div class="go">
+      <button type="button" data-preset="od"><span>Termin überschritten</span><span class="num bad">${od.length}</span></button>
+      <button type="button" data-preset="na"><span>Im Plan, aber ohne Maßnahme</span><span class="num">${na.length}</span></button>
+      <button type="button" data-preset="unmeasured"><span>Umgesetzt, aber nicht gemessen</span><span class="num">${IDS.filter(i => R[i].st === "I" && !R[i].m).length}</span></button>
+      <button type="button" data-preset="L"><span>Nur geplant</span><span class="num">${c("L")}</span></button>
+      ${NR > 1 ? `<button type="button" data-preset="neu"><span>Seit dem letzten Lauf nicht mehr erfüllt</span><span class="num bad">${IDS.filter(i => histKey(i) === "neu").length}</span></button>` : ""}
+    </div>
+    ${runsTable()}
+    ${sourcesList()}
+    </div>`;
+}
+function runsTable() {
+  if (!NR) return "";
+  const rows = [];
+  for (let k = NR - 1; k >= 0 && rows.length < 60; k--) {
+    const r = RUNS[k], ch = changes(k);
+    const link = r.job ? `<a href="${esc(r.job)}" target="_blank" rel="noopener">${esc(runLabel(k))}</a>` : esc(runLabel(k));
+    rows.push(`<span class="num" title="${esc(r.dir)}">${link}</span><span class="num">${r.plan ? `${r.i} / ${r.p} / ${r.l}` : "ohne Plan"}</span><span class="num"><span>${r.s}</span> · <span class="${r.n ? "bad" : ""}">${r.n}</span></span>` +
+      `<span class="ch">${k === 0 ? `<span class="small">erster Lauf</span>` : ch.length ? ch.slice(0, 12).map(i => `<button type="button" data-open="${esc(i)}" title="${esc(hst(i, k - 1) + " → " + hst(i, k))}">${esc(i)}</button>`).join("") + (ch.length > 12 ? `<span class="small">und ${ch.length - 12} weitere</span>` : "") : `<span class="small">keine Änderung</span>`}</span>`);
+  }
+  return `<div class="sec"><h2>Verlauf <span>${NR} Läufe, neuester oben</span></h2>
+    <div class="runs"><span class="h">Lauf</span><span class="h" title="umgesetzt / teilweise / geplant">Stand</span><span class="h" title="erfüllt · nicht erfüllt">Messung</span><span class="h">Änderungen</span>${rows.join("")}</div></div>`;
+}
+function sourcesList() {
+  if (!D.sources || !D.sources.length) return "";
+  return `<details class="hint"><summary>Woher die Daten kommen: ${D.sources.length} Importe, ${D.sources.filter(s => s.state === "verified").length} mit passender Prüfsumme</summary><div class="srcs">` +
+    D.sources.map(s => `<div><span class="st ${s.state === "mismatch" || s.state === "missing" ? "bad" : ""}">${esc(SRCST[s.state] || s.state)}</span> ${esc(s.from)}${s.n > 1 ? ` (und ${s.n - 1} weitere)` : ""} → ${esc(s.to || s.href)}${s.remote ? " (geladen)" : ""}</div>`).join("") +
+    `</div></details>`;
+}
+function renderDetail() {
+  const id = state.cur, el = document.getElementById("detail");
+  let body;
+  if (id && R[id]) body = detailReq(id); else if (id && D.ext[id]) body = detailExt(id); else body = detailStart();
+  const prev = state.hist.at(-1);
+  const nav = id ? `<div class="dnav">${prev !== undefined ? `<button type="button" class="back" id="back">← ${esc(prev || "Start")}</button>` : ""}<span class="trail">${state.hist.slice(-4).filter(Boolean).map(h => `<a href="#${esc(h)}">${esc(h)}</a>`).join("")}${state.hist.length ? `<a href="#${esc(id)}" aria-current="page" style="color:var(--ink);text-decoration:none">${esc(id)}</a>` : ""}</span></div>` : "";
+  el.innerHTML = `<div class="dwrap">${nav}${body}</div>`;
+  el.scrollTop = 0;
+}
+function render() {
+  const n = results().length;
+  renderBar(n); renderFacets(); renderList(); renderDetail();
+  document.getElementById("sort").value = state.sort;
+}
+function openId(id, push = true) {
+  if (id === state.cur) return;
+  if (push) state.hist.push(state.cur || "");
+  state.cur = id;
+  if (location.hash.slice(1) !== id) history.replaceState(null, "", id ? "#" + id : location.pathname);
+  renderList(); renderDetail();
+  const o = document.getElementById("opt-" + CSS.escape(id || ""));
+  if (o) o.scrollIntoView({ block: "nearest" });
+  if (innerWidth <= 1100) document.getElementById("detail").scrollIntoView({ block: "start", behavior: "smooth" });
+}
+
+// Ereignisse
+document.getElementById("meta").innerHTML = [`<span>Stand ${de(D.run.date)} ${esc(D.run.time)}</span>`, NR > 1 ? `<span>${NR} Läufe seit ${de(RUNS[0].d)}</span>` : "", D.run.sha ? `<span>Commit ${esc(D.run.sha)}</span>` : "", `<span>Katalog ${esc(D.catalog.slice(0,7))}</span>`].join("");
+document.getElementById("proj").textContent = D.run.project;
+const qEl = document.getElementById("q");
+qEl.addEventListener("input", () => { state.q = qEl.value; renderBar(results().length); renderFacets(); renderList(); });
+qEl.addEventListener("keydown", e => {
+  if (e.key === "Enter" && LIST.length) { openId(LIST[0]); }
+  if (e.key === "ArrowDown") { e.preventDefault(); document.getElementById("rows").focus(); if (LIST.length && !LIST.includes(state.cur)) openId(LIST[0]); }
+  if (e.key === "Escape") { qEl.value = ""; state.q = ""; render(); }
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "/" && document.activeElement !== qEl && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); qEl.focus(); qEl.select(); }
+});
+document.getElementById("rows").addEventListener("keydown", e => {
+  if (!LIST.length || !["ArrowDown", "ArrowUp", "j", "k"].includes(e.key)) return;
+  e.preventDefault();
+  const ix = LIST.indexOf(state.cur), d = (e.key === "ArrowDown" || e.key === "j") ? 1 : -1;
+  openId(LIST[Math.max(0, Math.min(LIST.length - 1, ix + d))]);
+});
+document.getElementById("sort").addEventListener("change", e => { state.sort = e.target.value; save(); renderList(); });
+document.addEventListener("click", e => {
+  const t = e.target;
+  const row = t.closest(".row[data-id]"); if (row) return openId(row.dataset.id);
+  const op = t.closest("[data-open]"); if (op) return openId(op.dataset.open);
+  const fv = t.closest(".fv[data-f]"); if (fv) return toggle(fv.dataset.f, fv.dataset.v);
+  const rm = t.closest("[data-rm]"); if (rm) return toggle(rm.dataset.rm, rm.dataset.v, false);
+  const pv = t.closest("[data-piv]"); if (pv) return pivot(pv.dataset.piv, pv.dataset.v);
+  const mo = t.closest("[data-more]"); if (mo) { state.open[mo.dataset.more] = !state.open[mo.dataset.more]; return renderFacets(); }
+  if (t.closest("#clearall")) { state.sel = {}; state.q = ""; qEl.value = ""; save(); return render(); }
+  if (t.closest("#mtoggle")) { document.getElementById("facets").classList.toggle("closed"); return renderFacets(); }
+  if (t.closest("#back")) { const p = state.hist.pop(); state.cur = p || null; history.replaceState(null, "", p ? "#" + p : location.pathname); renderList(); renderDetail(); return; }
+  const pr = t.closest("[data-preset]");
+  if (pr) {
+    const k = pr.dataset.preset;
+    state.q = ""; qEl.value = "";
+    state.sel = k === "od" ? { plan: ["od"] } : k === "na" ? { plan: ["na"] } : k === "unmeasured" ? { st: ["I"], m: ["nein"] } : k === "neu" ? { hx: ["neu"] } : { st: ["L"] };
+    save(); render(); return;
+  }
+  const a = t.closest('.trail a[href^="#"]');
+  if (a) { e.preventDefault(); openId(decodeURIComponent(a.getAttribute("href").slice(1))); }
+});
+window.addEventListener("hashchange", () => { const h = decodeURIComponent(location.hash.slice(1)); if (R[h] || D.ext[h]) openId(h); });
+const h0 = decodeURIComponent(location.hash.slice(1));
+if (R[h0] || D.ext[h0]) state.cur = h0;
+render();
+// A link to one requirement on a narrow screen: the record sits below the
+// list there, so it has to be brought into view as a click would.
+if (state.cur && innerWidth <= 1100) document.getElementById("detail").scrollIntoView({ block: "start" });
+</script>

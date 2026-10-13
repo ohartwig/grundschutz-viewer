@@ -1,0 +1,6 @@
+.DS_Store
+/out/
+/grundschutz-viewer
+/.go/
+coverage.out
+__pycache__/

@@ -1,0 +1,6 @@
+{
+  // The issue and merge-request templates under .gitlab/ are synced from
+  // devops/repo-templates and overwritten by the next sync; they are linted
+  // there, not here.
+  "ignores": [".gitlab/**", "CHANGELOG.md"]
+}
