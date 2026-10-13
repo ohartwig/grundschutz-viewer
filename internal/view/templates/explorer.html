@@ -502,4 +502,7 @@ window.addEventListener("hashchange", () => { const h = decodeURIComponent(locat
 const h0 = decodeURIComponent(location.hash.slice(1));
 if (R[h0] || D.ext[h0]) state.cur = h0;
 render();
+// A link to one requirement on a narrow screen: the record sits below the
+// list there, so it has to be brought into view as a click would.
+if (state.cur && innerWidth <= 1100) document.getElementById("detail").scrollIntoView({ block: "start" });
 </script>
