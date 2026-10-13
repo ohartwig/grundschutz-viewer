@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Kai Ole Hartwig <mail@ole-hartwig.eu>
+// SPDX-License-Identifier: MIT
+
 // Command grundschutz-viewer writes one HTML page from OSCAL documents: the
 // security plan, the assessment plan, assessment results and the POA&M that
 // grundschutz-worksheets produces, with the profile and catalog they import.

@@ -1,0 +1,21 @@
+# Release configuration for yasrt; the shared defaults come from the CI
+# component. Tags are v${version}; the first release is 0.1.0.
+product: custom
+tag_format: "v${version}"
+versioning:
+  initial: "0.1.0"
+deliverability:
+  non_release_paths:
+    - ".gitlab-ci.yml"
+    - ".yasrt.yaml"
+    - ".gitlab/**"
+    - ".gitsigners"
+    - ".gitsigners.d/**"
+    - ".reuse/**"
+    - "LICENSES/**"
+    - ".markdownlint.jsonc"
+    - ".markdownlint-cli2.jsonc"
+    - ".mise.toml"
+    - "lefthook.yml"
+    - ".well-known/**"
+    - "SECURITY.md"

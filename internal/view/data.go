@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Kai Ole Hartwig <mail@ole-hartwig.eu>
+// SPDX-License-Identifier: MIT
+
 // Package view turns a set of OSCAL documents into the data of the page and
 // writes the page.
 package view

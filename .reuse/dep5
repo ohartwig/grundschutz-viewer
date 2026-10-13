@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: grundschutz-viewer
+Upstream-Contact: Kai Ole Hartwig <mail@ole-hartwig.eu>
+Source: https://github.com/ohartwig/grundschutz-viewer
+
+Files: *
+Copyright: 2026 Kai Ole Hartwig
+License: MIT

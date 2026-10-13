@@ -1,3 +1,6 @@
+// SPDX-FileCopyrightText: 2026 Kai Ole Hartwig <mail@ole-hartwig.eu>
+// SPDX-License-Identifier: MIT
+
 // Package oscal reads the parts of OSCAL documents the viewer shows: the
 // catalog, the profile, the security plan, the assessment plan, assessment
 // results, the POA&M and mapping collections. Fields the viewer does not use
