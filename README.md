@@ -29,6 +29,20 @@ worksheets chain with the five
 [grundschutz-checks](https://github.com/ohartwig/grundschutz-checks), an owner
 review and an improvement register. The page is in German, like the catalog.
 
+## Download
+
+Every release carries a ZIP per platform: Linux (amd64, arm64), macOS (Apple
+Silicon, Intel) and Windows (amd64), on the
+[releases](https://github.com/ohartwig/grundschutz-viewer/releases) page. Unzip
+it and run the one binary in it; there is nothing to install.
+
+The macOS binaries are signed and notarised, so Gatekeeper lets them start.
+The Windows binary is not signed; SmartScreen will say so. `SHA256SUMS` lists
+every package and comes with a cosign signature, `SHA256SUMS.sig`.
+
+With Go 1.27 or newer, `go install` works as well (below).
+`grundschutz-viewer -version` prints the version.
+
 ## Usage
 
 ```bash
