@@ -15,25 +15,47 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime/debug"
 	"strings"
 
 	"github.com/ohartwig/grundschutz-viewer/internal/oscal"
 	"github.com/ohartwig/grundschutz-viewer/internal/view"
 )
 
+// version is set by the release build (-ldflags "-X main.version=v1.2.3").
+// A binary from `go install` carries the module version instead.
+var version = ""
+
 func main() {
 	out := flag.String("o", "grundschutz.html", "the page to write, - for stdout")
 	layout := flag.String("view", "explorer", "layout: "+strings.Join(view.Views, " or "))
 	offline := flag.Bool("offline", false, "never fetch an import over the network")
+	showVersion := flag.Bool("version", false, "print the version and exit")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "usage: grundschutz-viewer [flags] [file or directory ...]\n\nWithout arguments the current directory is read.\n\n")
 		flag.PrintDefaults()
 	}
 	flag.Parse()
+	if *showVersion {
+		fmt.Println("grundschutz-viewer", versionString())
+		return
+	}
 	if err := run(*out, *layout, *offline, flag.Args()); err != nil {
 		fmt.Fprintln(os.Stderr, "grundschutz-viewer:", err)
 		os.Exit(1)
 	}
+}
+
+// versionString is the release tag, else the module version go install
+// recorded, else "devel" for a build from a checkout.
+func versionString() string {
+	if version != "" {
+		return version
+	}
+	if info, ok := debug.ReadBuildInfo(); ok && info.Main.Version != "" && info.Main.Version != "(devel)" {
+		return info.Main.Version
+	}
+	return "devel"
 }
 
 func run(out, layout string, offline bool, paths []string) error {
