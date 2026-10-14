@@ -19,3 +19,4 @@ deliverability:
     - "lefthook.yml"
     - ".well-known/**"
     - "SECURITY.md"
+    - "tools/**"
