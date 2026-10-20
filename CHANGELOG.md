@@ -1,3 +1,33 @@
+## [0.2.3](https://github.com/ohartwig/grundschutz-viewer/compare/v0.2.2...v0.2.3) (2026-10-20)
+
+### :bug: Fixes
+
+* **deps:** update dependency golang to v1.27.3
+
+### :repeat: Continuous Integrations
+
+* **deps:** update code-signing docker tag to v1.3.69
+* **deps:** update dependency lint-tools to v1.40.9
+* **deps:** update dependency lint-tools to v1.40.8
+* **deps:** update code-signing docker tag to v1.3.68
+* **deps:** update dependency lint-tools to v1.40.7
+* **deps:** update code-signing docker tag to v1.3.67
+* **deps:** update dependency lint-tools to v1.40.6
+* **deps:** update code-signing docker tag to v1.3.66
+* **deps:** update dependency lint-tools to v1.40.5
+* **deps:** update dependency lint-tools to v1.40.4
+* **deps:** update dependency lint-tools to v1.40.3
+* **deps:** update dependency lint-tools to v1.40.2
+* **deps:** update dependency lint-tools to v1.40.1
+* **deps:** update dependency lint-tools to v1.40.0
+* **deps:** update dependency lint-tools to v1.39.14
+* **deps:** update dependency lint-tools to v1.39.13
+* **deps:** update dependency extension-clean-export to v1.7.1
+* **deps:** update dependency lint-tools to v1.39.12
+* **deps:** update dependency lint-tools to v1.39.11
+* **deps:** update dependency lint-tools to v1.39.10
+* **deps:** update dependency lint-tools to v1.39.9
+
 ## [0.2.2](https://github.com/ohartwig/grundschutz-viewer/compare/v0.2.1...v0.2.2) (2026-10-16)
 
 ### :repeat: Continuous Integrations
