@@ -1,3 +1,42 @@
+## [0.2.4](https://github.com/ohartwig/grundschutz-viewer/compare/v0.2.3...v0.2.4) (2026-10-22)
+
+### :repeat: Continuous Integrations
+
+* **deps:** update dependency lint-tools to v1.40.32
+* **deps:** update ci components
+* **deps:** update code-signing docker tag to v1.3.76
+* **deps:** update dependency lint-tools to v1.40.30
+* **deps:** update dependency extension-clean-export to v1.7.2
+* **deps:** update dependency lint-tools to v1.40.29
+* **deps:** update dependency lint-tools to v1.40.28
+* **deps:** update dependency lint-tools to v1.40.27
+* **deps:** update dependency lint-tools to v1.40.26
+* **deps:** update dependency lint-tools to v1.40.25
+* **deps:** update code-signing docker tag to v1.3.75
+* **deps:** update dependency lint-tools to v1.40.24
+* **deps:** update dependency lint-tools to v1.40.23
+* **deps:** update dependency lint-tools to v1.40.22
+* **deps:** update dependency lint-tools to v1.40.21
+* **deps:** update dependency lint-tools to v1.40.20
+* **deps:** update dependency lint-tools to v1.40.19
+* **deps:** update dependency lint-tools to v1.40.18
+* **deps:** update dependency lint-tools to v1.40.17
+* **deps:** update dependency lint-tools to v1.40.15
+* **deps:** update code-signing docker tag to v1.3.74
+* **deps:** update code-signing docker tag to v1.3.73
+* **deps:** update dependency lint-tools to v1.40.14
+* **deps:** update dependency lint-tools to v1.40.13
+* **deps:** update dependency lint-tools to v1.40.12
+* **deps:** update code-signing docker tag to v1.3.72
+* **deps:** update dependency lint-tools to v1.40.11
+* **deps:** update code-signing docker tag to v1.3.71
+* **deps:** update code-signing docker tag to v1.3.70
+* **deps:** update dependency lint-tools to v1.40.10
+
+### :repeat: Chores
+
+* **repo-templates:** sync
+
 ## [0.2.3](https://github.com/ohartwig/grundschutz-viewer/compare/v0.2.2...v0.2.3) (2026-10-20)
 
 ### :bug: Fixes
