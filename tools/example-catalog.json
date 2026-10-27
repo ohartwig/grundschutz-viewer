@@ -1,0 +1,1096 @@
+{
+  "catalog": {
+    "uuid": "00000000-0000-4000-8000-000000000001",
+    "metadata": {
+      "title": "Grundschutz++ (Auszug für das Beispiel)",
+      "remarks": "Excerpt of the Grundschutz++ catalog of the BSI Stand-der-Technik-Bibliothek at commit 160c177db6c84d3c621fff614559943b1de8c600 (control_layer/Grundschutz++/Grundschutz++-resolved_catalog.json). Licence: CC BY-SA 4.0, https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/blob/main/LICENSE. Controls are cut to id, title, props and parts; links and the sub-requirements that are not listed here are left out."
+    },
+    "groups": [
+      {
+        "id": "ASST",
+        "title": "Informationen und Assets",
+        "groups": [
+          {
+            "id": "ASST.2",
+            "title": "Inventarisierung",
+            "controls": [
+              {
+                "id": "ASST.2.3.2",
+                "class": "BSI-Stand-der-Technik-Kernel",
+                "title": "Software Bill of Materials (SBOM)",
+                "props": [
+                  {
+                    "name": "alt-identifier",
+                    "value": "ddd9f433-8d27-4ed5-9061-e77fc9564dbc"
+                  },
+                  {
+                    "name": "sec_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_level.csv",
+                    "value": "normal-SdT"
+                  },
+                  {
+                    "name": "effort_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/effort_level.csv",
+                    "value": "4"
+                  },
+                  {
+                    "name": "confidentiality",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "integrity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "availability",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "authenticity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "0"
+                  },
+                  {
+                    "name": "threats",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/basethreats.csv",
+                    "value": "G 0.18, G 0.16, G 0.17, G 0.45"
+                  }
+                ],
+                "parts": [
+                  {
+                    "id": "ASST.2.3.2_stm",
+                    "name": "statement",
+                    "props": [
+                      {
+                        "name": "target_object_categories",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/target_object_categories.csv",
+                        "value": "Anwendungen"
+                      },
+                      {
+                        "name": "documentation",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/documentation_guidelines.csv",
+                        "value": "Inventar Anwendungen"
+                      },
+                      {
+                        "name": "result",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "die Software Bill of Materials (SBOM)"
+                      },
+                      {
+                        "name": "action_word",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/action_words.csv",
+                        "value": "dokumentieren"
+                      },
+                      {
+                        "name": "modal_verb",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/modal_verbs.csv",
+                        "value": "SOLLTE"
+                      }
+                    ],
+                    "prose": "Informationen und Assets für Anwendungen SOLLTE die Software Bill of Materials (SBOM) dokumentieren."
+                  },
+                  {
+                    "id": "ASST.2.3.2_gdn",
+                    "name": "guidance",
+                    "prose": "Eine Software Bill of Materials (SBOM) ist in diesem Zusammenhang eine strukturierte Liste aller Komponenten, Bibliotheken und Abhängigkeiten, die in einer Anwendung enthalten sind, einschließlich ihrer Versionen und Herkunft. Sie kann dabei sowohl Open-Source- als auch proprietäre Bestandteile erfassen und in maschinenlesbaren Formaten (z. B. SPDX, CycloneDX) vorliegen. Der Zweck dieser Dokumentation liegt darin, Transparenz über die eingesetzten Softwarebestandteile zu schaffen, sodass Abhängigkeiten, potenzielle Schwachstellen oder veraltete Komponenten nachvollziehbar bleiben. Ohne diese Transparenz könnte es bei Sicherheitsvorfällen, Lizenzkonflikten oder fehlender Wartbarkeit zu erheblichen Problemen kommen, während eine gepflegte SBOM die schnelle Identifikation von Risiken, die Minimierung von Vendor Lock-in und die Nachvollziehbarkeit der Software-Lieferkette unterstützen kann. Hierzu kann die BSI TR-03183-2 verwendet werden."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "BER",
+        "title": "Berechtigung",
+        "groups": [
+          {
+            "id": "BER.5",
+            "title": "Umgang mit Authentisierungsmitteln",
+            "controls": [
+              {
+                "id": "BER.5.9",
+                "class": "BSI-Stand-der-Technik-Kernel",
+                "title": "Mehr-Faktor-Authentisierung für weitreichende Berechtigungen",
+                "props": [
+                  {
+                    "name": "alt-identifier",
+                    "value": "55b70084-f446-42af-908b-0f514a72f380"
+                  },
+                  {
+                    "name": "sec_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_level.csv",
+                    "value": "normal-SdT"
+                  },
+                  {
+                    "name": "effort_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/effort_level.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "confidentiality",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "integrity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "availability",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "authenticity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "threats",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/basethreats.csv",
+                    "value": "G 0.36, G 0.30"
+                  },
+                  {
+                    "name": "tags",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/tags.csv",
+                    "value": "MFA, Living off the land, Privilege Escalation, Credential Stuffing, Brute-Force-Attacke"
+                  }
+                ],
+                "parts": [
+                  {
+                    "id": "BER.5.9_stm",
+                    "name": "statement",
+                    "props": [
+                      {
+                        "name": "documentation",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/documentation_guidelines.csv",
+                        "value": "IT-Betriebskonzept"
+                      },
+                      {
+                        "name": "result",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "Mehr-Faktor-Authentisierung"
+                      },
+                      {
+                        "name": "result_specification",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "für weitreichende Berechtigungen"
+                      },
+                      {
+                        "name": "action_word",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/action_words.csv",
+                        "value": "aktivieren"
+                      },
+                      {
+                        "name": "modal_verb",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/modal_verbs.csv",
+                        "value": "SOLLTE"
+                      }
+                    ],
+                    "prose": "Berechtigung SOLLTE Mehr-Faktor-Authentisierung für weitreichende Berechtigungen aktivieren."
+                  },
+                  {
+                    "id": "BER.5.9_gdn",
+                    "name": "guidance",
+                    "prose": "Eine Mehr-Faktor-Authentifizierung bei Zugängen mit weitreichenden Berechtigungen, z.B. Administrationskonten, die Zugriff auf wichtige Server wie den Verzeichnisdienst, das MDM, EDR oder DNS haben, erschwert den unberechtigten Zugang zu diesen Zugängen. Auch der Zugriff auch besonders sensible Daten kann eine weitreichende Berechtigung sein."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "DET",
+        "title": "Detektion",
+        "groups": [
+          {
+            "id": "DET.5",
+            "title": "Management von Schwachstellen",
+            "controls": [
+              {
+                "id": "DET.5.3",
+                "class": "BSI-Stand-der-Technik-Kernel",
+                "title": "Schwachstellenscans",
+                "props": [
+                  {
+                    "name": "alt-identifier",
+                    "value": "7f84ed26-e585-402f-bc0e-40904319cfc8"
+                  },
+                  {
+                    "name": "sec_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_level.csv",
+                    "value": "normal-SdT"
+                  },
+                  {
+                    "name": "effort_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/effort_level.csv",
+                    "value": "3"
+                  },
+                  {
+                    "name": "confidentiality",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "integrity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "availability",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "authenticity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "0"
+                  },
+                  {
+                    "name": "threats",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/basethreats.csv",
+                    "value": "G 0.28, G 0.23, G 0.18"
+                  }
+                ],
+                "parts": [
+                  {
+                    "id": "DET.5.3_stm",
+                    "name": "statement",
+                    "props": [
+                      {
+                        "name": "documentation",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/documentation_guidelines.csv",
+                        "value": "Detektions-Konzept"
+                      },
+                      {
+                        "name": "result",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "eine Vorgehensweise zum Scan nach Schwachstellen"
+                      },
+                      {
+                        "name": "result_specification",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "einschließlich deren Auswertung und Behandlung"
+                      },
+                      {
+                        "name": "action_word",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/action_words.csv",
+                        "value": "verankern"
+                      },
+                      {
+                        "name": "modal_verb",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/modal_verbs.csv",
+                        "value": "SOLLTE"
+                      }
+                    ],
+                    "prose": "Detektion SOLLTE eine Vorgehensweise zum Scan nach Schwachstellen einschließlich deren Auswertung und Behandlung verankern."
+                  },
+                  {
+                    "id": "DET.5.3_gdn",
+                    "name": "guidance",
+                    "prose": "Über das Netz erreichbare Schwachstellen bergen das Risiko, dass hierüber Angriffe in IT-Systeme und Anwendungen eindringen, Daten auslesen oder sich über das Netz verbreiten. Schwachstellenscans finden solche Lücken, indem sie Anfragen zu bekannten Schwachstellen im Netz stellen und die Antworten auswerten. Regelmäßige Scans tragen dazu bei, dass Sicherheitslücken entdeckt werden, bevor sie ausgenutzt werden."
+                  }
+                ]
+              },
+              {
+                "id": "DET.5.10",
+                "class": "BSI-Stand-der-Technik-Kernel",
+                "title": "Zeitnahes Patchmanagement",
+                "props": [
+                  {
+                    "name": "alt-identifier",
+                    "value": "b2c08460-0038-4f49-b459-dba756e55ae9"
+                  },
+                  {
+                    "name": "sec_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_level.csv",
+                    "value": "normal-SdT"
+                  },
+                  {
+                    "name": "effort_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/effort_level.csv",
+                    "value": "3"
+                  },
+                  {
+                    "name": "confidentiality",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "integrity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "availability",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "authenticity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "0"
+                  },
+                  {
+                    "name": "threats",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/basethreats.csv",
+                    "value": "G 0.28, G 0.23"
+                  }
+                ],
+                "parts": [
+                  {
+                    "id": "DET.5.10_stm",
+                    "name": "statement",
+                    "props": [
+                      {
+                        "name": "documentation",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/documentation_guidelines.csv",
+                        "value": "Detektions-Konzept"
+                      },
+                      {
+                        "name": "result",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "ein zeitnahes Patchmanagement"
+                      },
+                      {
+                        "name": "action_word",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/action_words.csv",
+                        "value": "verankern"
+                      },
+                      {
+                        "name": "modal_verb",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/modal_verbs.csv",
+                        "value": "SOLLTE"
+                      }
+                    ],
+                    "prose": "Detektion SOLLTE ein zeitnahes Patchmanagement verankern."
+                  },
+                  {
+                    "id": "DET.5.10_gdn",
+                    "name": "guidance",
+                    "prose": "Patches (Updates oder Sicherheitsaktualisierungen) sind neue Versionen, die Sicherheitslücken schließen. Je nach Aufbau der betroffenen Assets kann es bei der Aktualisierung auch erforderlich sein, Abhängigkeiten (Bibliotheken, Upstream Software) ebenfalls zu aktualisieren. Dies kann durch automatisierte Installation oder nach einem Test umgesetzt werden. Die Umsetzung kann auch den schrittweisen Rollout von Patches vorsehen, sodass bei Fehlern im Patch nicht alle Systeme gleichzeitig betroffen sind und auch komplexe Fehlerbilder durch Rückmeldungen frühzeitig erkannt werden können. Dies kann zum Beispiel nach dem One-Many-All-Prinzip oder Blue-Green-Deployment erfolgen. Zur Beurteilung der Kritikalität von Patches kann die Krititikalität der mit dem Patch verbundenen Schwachstellen, das Risikoprofil der zu patchenden Assets oder eine Korrelation komplexer Angriffswege herangezogen werden."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "DEV",
+        "title": "Entwicklung",
+        "groups": [
+          {
+            "id": "DEV.2",
+            "title": "Softwareentwicklung - Security by Design",
+            "controls": [
+              {
+                "id": "DEV.2.4",
+                "class": "BSI-Stand-der-Technik-Kernel",
+                "title": "Einschränkung Zugriffs auf Quellcode",
+                "props": [
+                  {
+                    "name": "alt-identifier",
+                    "value": "37367710-3072-43af-a7bf-6c6cec49db0f"
+                  },
+                  {
+                    "name": "sec_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_level.csv",
+                    "value": "normal-SdT"
+                  },
+                  {
+                    "name": "effort_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/effort_level.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "confidentiality",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "0"
+                  },
+                  {
+                    "name": "integrity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "availability",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "0"
+                  },
+                  {
+                    "name": "authenticity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "threats",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/basethreats.csv",
+                    "value": "G 0.22, G 0.46"
+                  },
+                  {
+                    "name": "tags",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/tags.csv",
+                    "value": "Security by Design"
+                  }
+                ],
+                "parts": [
+                  {
+                    "id": "DEV.2.4_stm",
+                    "name": "statement",
+                    "props": [
+                      {
+                        "name": "documentation",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/documentation_guidelines.csv",
+                        "value": "Inventar Berechtigungen"
+                      },
+                      {
+                        "name": "result",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "den schreibenden Zugriff auf Quellcode"
+                      },
+                      {
+                        "name": "action_word",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/action_words.csv",
+                        "value": "einschränken"
+                      },
+                      {
+                        "name": "modal_verb",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/modal_verbs.csv",
+                        "value": "SOLLTE"
+                      }
+                    ],
+                    "prose": "Entwicklung SOLLTE den schreibenden Zugriff auf Quellcode einschränken."
+                  },
+                  {
+                    "id": "DEV.2.4_gdn",
+                    "name": "guidance",
+                    "prose": "Eine Einschränkung des schreibenden Zugriffes auf den Quellcode auf die zur Aufgabenerfüllung erforderlichen Personen oder IT-Systeme hilft, unbefugte Änderungen am Quellcode zu verhindern. Nach dem Grundsatz der geringstmöglichen Berechtigung benötigen schreibenden Zugriff nur Personen wie Entwickler oder Maintainer, zu deren Aufgaben die Arbeit am Code gehört."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "DEV.4",
+            "title": "Softwareentwicklung - Code",
+            "controls": [
+              {
+                "id": "DEV.4.3",
+                "class": "BSI-Stand-der-Technik-Kernel",
+                "title": "Softwarebestandteile (SBOM)",
+                "props": [
+                  {
+                    "name": "alt-identifier",
+                    "value": "5b695087-3a35-441a-b8c9-9937a681a996"
+                  },
+                  {
+                    "name": "sec_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_level.csv",
+                    "value": "normal-SdT"
+                  },
+                  {
+                    "name": "effort_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/effort_level.csv",
+                    "value": "3"
+                  },
+                  {
+                    "name": "confidentiality",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "integrity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "availability",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "authenticity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "0"
+                  },
+                  {
+                    "name": "threats",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/basethreats.csv",
+                    "value": "G 0.18, G 0.28"
+                  },
+                  {
+                    "name": "tags",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/tags.csv",
+                    "value": "Produktbeschreibung, Lieferketten"
+                  }
+                ],
+                "parts": [
+                  {
+                    "id": "DEV.4.3_stm",
+                    "name": "statement",
+                    "props": [
+                      {
+                        "name": "target_object_categories",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/target_object_categories.csv",
+                        "value": "Anwendungen"
+                      },
+                      {
+                        "name": "documentation",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/documentation_guidelines.csv",
+                        "value": "Entwicklungsdokumentation"
+                      },
+                      {
+                        "name": "result",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "die Bestandteile mit Hilfe einer Software Bill of Materials (SBOM)"
+                      },
+                      {
+                        "name": "result_specification",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "vor dem Release"
+                      },
+                      {
+                        "name": "action_word",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/action_words.csv",
+                        "value": "dokumentieren"
+                      },
+                      {
+                        "name": "modal_verb",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/modal_verbs.csv",
+                        "value": "SOLLTE"
+                      }
+                    ],
+                    "prose": "Entwicklung für Anwendungen SOLLTE die Bestandteile mit Hilfe einer Software Bill of Materials (SBOM) vor dem Release dokumentieren."
+                  },
+                  {
+                    "id": "DEV.4.3_gdn",
+                    "name": "guidance",
+                    "prose": "Details siehe BSI TR-03183-2. Anwendungen zur Modulverwaltung und Software Composition Analysis (SCA) können dabei unterstützen SBOMs als Teil eines CI/CD Prozesses automatisiert zu sammeln."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "KONF",
+        "title": "Konfiguration",
+        "groups": [
+          {
+            "id": "KONF.14",
+            "title": "Verteilte Anwendungen",
+            "controls": [
+              {
+                "id": "KONF.14.1",
+                "class": "BSI-Stand-der-Technik-Kernel",
+                "title": "Verschlüsselung beim Transport",
+                "params": [
+                  {
+                    "id": "konf.14.1-prm1",
+                    "props": [
+                      {
+                        "name": "alt-identifier",
+                        "value": "f309eb76-209c-4f90-a381-e1e375ba41b8"
+                      }
+                    ],
+                    "label": "einem anerkannten Standard"
+                  }
+                ],
+                "props": [
+                  {
+                    "name": "alt-identifier",
+                    "value": "99806244-514d-43e2-be34-4ac7ab0517ad"
+                  },
+                  {
+                    "name": "sec_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_level.csv",
+                    "value": "normal-SdT"
+                  },
+                  {
+                    "name": "effort_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/effort_level.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "confidentiality",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "integrity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "availability",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "0"
+                  },
+                  {
+                    "name": "authenticity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "threats",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/basethreats.csv",
+                    "value": "G 0.43, G 0.15"
+                  },
+                  {
+                    "name": "tags",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/tags.csv",
+                    "value": "Produktbeschreibung, Cryptography"
+                  }
+                ],
+                "parts": [
+                  {
+                    "id": "KONF.14.1_stm",
+                    "name": "statement",
+                    "props": [
+                      {
+                        "name": "target_object_categories",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/target_object_categories.csv",
+                        "value": "Anwendungen"
+                      },
+                      {
+                        "name": "documentation",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/documentation_guidelines.csv",
+                        "value": "Konfigurationshistorie"
+                      },
+                      {
+                        "name": "result",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "Kommunikation beim Transport"
+                      },
+                      {
+                        "name": "result_specification",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "über Netze nach {{einem anerkannten Standard}}"
+                      },
+                      {
+                        "name": "action_word",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/action_words.csv",
+                        "value": "verschlüsseln"
+                      },
+                      {
+                        "name": "modal_verb",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/modal_verbs.csv",
+                        "value": "SOLLTE"
+                      }
+                    ],
+                    "prose": "Konfiguration für Anwendungen SOLLTE Kommunikation beim Transport über Netze nach {{ insert: param, konf.14.1-prm1 }} verschlüsseln."
+                  },
+                  {
+                    "id": "KONF.14.1_gdn",
+                    "name": "guidance",
+                    "prose": "Werden Daten unverschlüsselt übertragen, so könnten sie abgehört oder unbemerkt manipuliert werden. Relevant sind hierbei alle von der Anwendung übertragenen Daten, inklusive Authentifizierung an der Benutzerschnittstelle oder API, Abruf von Daten, Server-Server-Replikation oder zur Datensicherung. Das betrifft sowohl Inhalts- als auch Metadaten. Die Umsetzung kann mit Algorithmen zur Transportverschlüsselung wie Transport Layer Security (TLS) oder Ende-zu-Ende-Verschlüsselung erfolgen. Für aktuelle Verschlüsselungsverfahren siehe BSI TR-02102. Die Konfiguration der Verschlüsselung kann sich daran orientieren, wie lange die transportieren Daten, z.B. Transaktionen, vertraulich zu behandeln sind. Eine Herausforderung hierbei sind Anwendungen, die über allgemeine Anbindungen mit anderen Institutionen kommunizieren, z.B. E-Mails oder Anrufe ins öffentliche Telefonnetz. Diese Anwendungen können nur ihren Teil der Verbindungsstrecke verschlüsseln, so dass der Rest der Strecke und damit die Verbindung an sich dennoch unverschlüsselt sein könnte. Überträgt die Anwendung keine schützenswerten Daten über das Netz, so ist die Anforderung entbehrlich."
+                  }
+                ],
+                "controls": [
+                  {
+                    "id": "KONF.14.1.1",
+                    "class": "BSI-Stand-der-Technik-Kernel",
+                    "title": "Obligatorische Verschlüsselung",
+                    "props": [
+                      {
+                        "name": "alt-identifier",
+                        "value": "b73c400e-b4f8-494c-ac02-619258f77a2d"
+                      },
+                      {
+                        "name": "sec_level",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_level.csv",
+                        "value": "normal-SdT"
+                      },
+                      {
+                        "name": "effort_level",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/effort_level.csv",
+                        "value": "4"
+                      },
+                      {
+                        "name": "confidentiality",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                        "value": "2"
+                      },
+                      {
+                        "name": "integrity",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                        "value": "1"
+                      },
+                      {
+                        "name": "availability",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                        "value": "0"
+                      },
+                      {
+                        "name": "authenticity",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                        "value": "1"
+                      },
+                      {
+                        "name": "threats",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/basethreats.csv",
+                        "value": "G 0.43, G 0.15"
+                      },
+                      {
+                        "name": "tags",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/tags.csv",
+                        "value": "Produktbeschreibung"
+                      }
+                    ],
+                    "parts": [
+                      {
+                        "id": "KONF.14.1.1_stm",
+                        "name": "statement",
+                        "props": [
+                          {
+                            "name": "target_object_categories",
+                            "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/target_object_categories.csv",
+                            "value": "Anwendungen"
+                          },
+                          {
+                            "name": "documentation",
+                            "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/documentation_guidelines.csv",
+                            "value": "Konfigurationshistorie"
+                          },
+                          {
+                            "name": "result",
+                            "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                            "value": "unverschlüsselte und anfällige Verbindungen"
+                          },
+                          {
+                            "name": "result_specification",
+                            "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                            "value": "über Netze"
+                          },
+                          {
+                            "name": "action_word",
+                            "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/action_words.csv",
+                            "value": "deaktivieren"
+                          },
+                          {
+                            "name": "modal_verb",
+                            "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/modal_verbs.csv",
+                            "value": "SOLLTE"
+                          }
+                        ],
+                        "prose": "Konfiguration für Anwendungen SOLLTE unverschlüsselte und anfällige Verbindungen über Netze deaktivieren."
+                      },
+                      {
+                        "id": "KONF.14.1.1_gdn",
+                        "name": "guidance",
+                        "prose": "Obligatorische Verschlüsselung bedeutet, dass die Anwendung ausschließlich nach dem Stand der Technik verschlüsselt kommuniziert. Unverschlüsselte oder mit bekannten Methoden angreifbare Verbindungsanfragen werden dagegen abgelehnt. Die Verwendung obligatorischer Verschlüsselung im Internet ist aktuell sehr uneinheitlich: Viele E-Mail-Server z.B. verschlüsseln im Auslieferungszustand nur opportunistisch - also nur wenn der Verbindungsaufbau so funktioniert. Das macht Verbindungen anfällig für Downgrade-Angriffe. Diese lassen sich verhindern, indem unverschlüsselte Verbindungen vollständig deaktiviert werden. Andererseits kann es dadurch auch zu Verbindungsproblemen mit Servern kommen, die überhaupt keine Verschlüsselung mit aktuellen Protokollen unterstützen. Für aktuelle Verschlüsselungsverfahren siehe BSI TR-02102."
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "KONF.3",
+            "title": "Physischer Schutz",
+            "controls": [
+              {
+                "id": "KONF.3.3",
+                "class": "BSI-Stand-der-Technik-Kernel",
+                "title": "SIM-PIN",
+                "props": [
+                  {
+                    "name": "alt-identifier",
+                    "value": "f2184ae3-ca55-4b77-9727-46deb4b9d0ff"
+                  },
+                  {
+                    "name": "sec_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_level.csv",
+                    "value": "normal-SdT"
+                  },
+                  {
+                    "name": "effort_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/effort_level.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "confidentiality",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "integrity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "availability",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "authenticity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "threats",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/basethreats.csv",
+                    "value": "G 0.30, G 0.16, G 0.17"
+                  },
+                  {
+                    "name": "tags",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/tags.csv",
+                    "value": "Produktbeschreibung"
+                  }
+                ],
+                "parts": [
+                  {
+                    "id": "KONF.3.3_stm",
+                    "name": "statement",
+                    "props": [
+                      {
+                        "name": "target_object_categories",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/target_object_categories.csv",
+                        "value": "IT-Systeme"
+                      },
+                      {
+                        "name": "documentation",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/documentation_guidelines.csv",
+                        "value": "Konfigurationshistorie"
+                      },
+                      {
+                        "name": "result",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "bei Mobilfunkanschluss eine SIM-PIN"
+                      },
+                      {
+                        "name": "action_word",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/action_words.csv",
+                        "value": "aktivieren"
+                      },
+                      {
+                        "name": "modal_verb",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/modal_verbs.csv",
+                        "value": "SOLLTE"
+                      }
+                    ],
+                    "prose": "Konfiguration für IT-Systeme SOLLTE bei Mobilfunkanschluss eine SIM-PIN aktivieren."
+                  },
+                  {
+                    "id": "KONF.3.3_gdn",
+                    "name": "guidance",
+                    "prose": "Eine SIM-PIN ist eine persönliche Identifikationsnummer, die direkt auf der SIM-Karte gespeichert wird und beim Starten oder Einlegen der Karte abgefragt wird. Sie dient nicht der Benutzeranmeldung am Endgerät selbst, sondern schützt den Mobilfunkanschluss auf Netzebene. Ohne aktivierte SIM-PIN könnte ein Angreifer bei Verlust oder Diebstahl einer SIM-Karte unmittelbar den Mobilfunkanschluss verwenden, etwa für kostenpflichtige Anrufe oder zum Abfangen von SMS-TANs. Die Aktivierung einer SIM-PIN kann somit eine missbräuchliche Nutzung deutlich erschweren, indem ein zusätzliches Hindernis für den unbefugten Zugriff auf Mobilfunkdienste geschaffen wird. Gilt auch für stationäre Systeme mit SIM oder Systeme die eine eSIM verwenden, da eine PIN je nach Diensteanbieter SIM-Swapping vorbeugen kann. Falls das System keine SIM-Karte verwendet, ist die Anforderung entbehrlich."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "TEST",
+        "title": "Änderungen und Tests",
+        "groups": [
+          {
+            "id": "TEST.4",
+            "title": "Freigabe",
+            "controls": [
+              {
+                "id": "TEST.4.1",
+                "class": "BSI-Stand-der-Technik-Kernel",
+                "title": "Autorisierung von Änderungen",
+                "props": [
+                  {
+                    "name": "alt-identifier",
+                    "value": "1aa8319f-93fb-4236-991a-d799ab69e0c2"
+                  },
+                  {
+                    "name": "sec_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_level.csv",
+                    "value": "normal-SdT"
+                  },
+                  {
+                    "name": "effort_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/effort_level.csv",
+                    "value": "3"
+                  },
+                  {
+                    "name": "confidentiality",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "integrity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "availability",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "authenticity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "0"
+                  },
+                  {
+                    "name": "threats",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/basethreats.csv",
+                    "value": "G 0.18"
+                  }
+                ],
+                "parts": [
+                  {
+                    "id": "TEST.4.1_stm",
+                    "name": "statement",
+                    "props": [
+                      {
+                        "name": "documentation",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/documentation_guidelines.csv",
+                        "value": "IT-Betriebskonzept"
+                      },
+                      {
+                        "name": "result",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "kritische Änderungen"
+                      },
+                      {
+                        "name": "result_specification",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "anhand von Kriterien einschließlich der Sicherheitsanforderungen"
+                      },
+                      {
+                        "name": "action_word",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/action_words.csv",
+                        "value": "autorisieren"
+                      },
+                      {
+                        "name": "modal_verb",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/modal_verbs.csv",
+                        "value": "SOLLTE"
+                      }
+                    ],
+                    "prose": "Änderungen und Tests SOLLTE kritische Änderungen anhand von Kriterien einschließlich der Sicherheitsanforderungen autorisieren."
+                  },
+                  {
+                    "id": "TEST.4.1_gdn",
+                    "name": "guidance",
+                    "prose": "Änderungen gelten als kritisch, wenn sie breite Auswirkungen auf Geschäftsprozesse haben, beispielsweise die Aktivierung der Zwei-Faktor-Authentifizierung am zentralen Verzeichnisdienst. Die Kritikalität ergibt sich zudem aus Art und Umfang der Änderung, etwa bei umfangreichen Migrationen oder sicherheitsrelevanten Fehlerbehebungen. Kritische Änderungen betreffen häufig die Bereitstellung für eine große Zahl interner oder externer Nutzender oder Eingriffe in hochverfügbare Systeme. Zu den maßgeblichen Kriterien für die Freigabe zählen das fehlerfreie Durchlaufen definierter Tests, eine ausreichende Nutzerakzeptanz in einem Beta-Test und das erfolgreiche Bestehen von Penetrationstests. Zweckmäßig ist eine mehrstufige Autorisierung, in der Änderungen anhand der prognostizierten Auswirkungen den Kategorien niedrig, mittel oder hoch zugeordnet und mit abgestuften Genehmigungsanforderungen verknüpft werden. Während bei geringfügigen Änderungen an unkritischen Systemen eine konzentrierte Prüfung grundlegender Sicherheitsanforderungen wie Authentifizierung, Verschlüsselung und Härtung ausreichen kann, erfordern umfangreiche Vorhaben mit hohem Risikoprofil in der Regel automatisierte Prüfmechanismen, ergänzt durch Checklisten für manuelle Tätigkeiten, um die Auswirkungen verlässlich beherrschbar zu halten."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "ARCH",
+        "title": "Architektur",
+        "groups": [
+          {
+            "id": "ARCH.2",
+            "title": "Netzdesign",
+            "controls": [
+              {
+                "id": "ARCH.2.2.5",
+                "class": "BSI-Stand-der-Technik-Kernel",
+                "title": "OT-Systeme",
+                "props": [
+                  {
+                    "name": "alt-identifier",
+                    "value": "43badc07-0172-4666-9a72-0c0289b7f540"
+                  },
+                  {
+                    "name": "sec_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_level.csv",
+                    "value": "normal-SdT"
+                  },
+                  {
+                    "name": "effort_level",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/effort_level.csv",
+                    "value": "3"
+                  },
+                  {
+                    "name": "confidentiality",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "integrity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "1"
+                  },
+                  {
+                    "name": "availability",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "2"
+                  },
+                  {
+                    "name": "authenticity",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/security_targets.csv",
+                    "value": "0"
+                  },
+                  {
+                    "name": "threats",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/basethreats.csv",
+                    "value": "G 0.23, G 0.9, G 0.40"
+                  },
+                  {
+                    "name": "tags",
+                    "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/tags.csv",
+                    "value": "Lateral Movement, Separation of Concerns"
+                  }
+                ],
+                "parts": [
+                  {
+                    "id": "ARCH.2.2.5_stm",
+                    "name": "statement",
+                    "props": [
+                      {
+                        "name": "target_object_categories",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/target_object_categories.csv",
+                        "value": "Netze"
+                      },
+                      {
+                        "name": "documentation",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/documentation_guidelines.csv",
+                        "value": "Netzplan"
+                      },
+                      {
+                        "name": "result",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/result.csv",
+                        "value": "Verbindungen zwischen OT-Systemen und anderen IT-Systemen"
+                      },
+                      {
+                        "name": "action_word",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/action_words.csv",
+                        "value": "einschränken"
+                      },
+                      {
+                        "name": "modal_verb",
+                        "ns": "https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek/tree/main/documentation/namespaces/modal_verbs.csv",
+                        "value": "SOLLTE"
+                      }
+                    ],
+                    "prose": "Architektur für Netze SOLLTE Verbindungen zwischen OT-Systemen und anderen IT-Systemen einschränken."
+                  },
+                  {
+                    "id": "ARCH.2.2.5_gdn",
+                    "name": "guidance",
+                    "prose": "IT- und OT-Systeme haben typischerweise sehr unterschiedliche Risikoprofile (IT: Schnelllebig, viele Cybersicherheitsmechanismen, OT: Stabilität, weniger Cybersicherheitsmechanismen, beispielsweise industrielle Steuerungssysteme und Gebäudeautomationstechnik). Insbesondere der Zugriff auf OT-Funktionen (z. B. Öffnung zentraler Schließanlage) ist mit erhöhtem Risiko verbunden und könnte auch versehentlich z.B. durch Portscanner ausgelöst werden. Stattdessen ist es empfehlenswert, den Zugriff zu solchen Netzen nur über dafür vorgesehene Quellen zu ermöglichen (z. B. Sprungserver, bestimmte auslösende OT-Systeme)."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
