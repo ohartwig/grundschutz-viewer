@@ -6,25 +6,31 @@
 // Writes the example of the README: a made-up company, Example GmbH, with a
 // small catalog excerpt, a profile and seven nightly runs of the worksheets
 // chain (security plan, assessment plan, results of five checks, POA&M), the
-// way grundschutz-worksheets and grundschutz-checks write them. Nothing in it
-// is real; the catalog excerpt is invented for the screenshots.
+// way grundschutz-worksheets and grundschutz-checks write them. The company,
+// the plans and the measurements are made up. The requirements are the BSI's:
+// tools/example-catalog.json is an excerpt of the Grundschutz++ catalog (CC
+// BY-SA 4.0, source commit in its metadata).
 //
 // Two requirements are left out of the profile as not applicable, and one
 // permanent nonfulfilment carries an approved residual risk, so the states of
-// BSI-Standard 300-1 are all on the page.
+// BSI-Standard 300-1 are all on the page. Only a SOLLTE can be a deviation
+// (4.1.2): the generator stops if a MUSS is permanently unfulfilled.
 //
 //	go run tools/example.go out/example
 package main
 
 import (
 	"crypto/sha256"
+	_ "embed"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
-	"strings"
 )
+
+//go:embed example-catalog.json
+var catalogJSON []byte
 
 type m = map[string]any
 
@@ -54,7 +60,7 @@ func res(uuid, href, sum string) m {
 }
 
 type req struct {
-	id, title, text, level, threats string
+	id string
 	// state of the plan, how it is measured, and what the example says
 	status, check, basis string
 	nf, risk             string // permanent: approved deviation
@@ -64,45 +70,29 @@ type req struct {
 }
 
 var reqs = []req{
-	{id: "ASST.2.3.2", title: "Software Bill of Materials (SBOM)", text: "Die Institution MUSS für jede selbst betriebene Anwendung eine Liste der enthaltenen Softwarebestandteile führen.", level: "normal-SdT", threats: "G 0.39",
+	{id: "ASST.2.3.2",
 		status: "planned", check: "sbom", basis: "Es gibt noch keine automatische SBOM.", nf: "temporary", action: "I-3: SBOM in der Build-Pipeline erzeugen", resp: "Plattform-Team", due: "2026-10-24", found: "nnnnnnn"},
-	{id: "BER.5.9", title: "Mehr-Faktor-Authentisierung für weitreichende Berechtigungen", text: "Zugänge mit weitreichenden Berechtigungen MÜSSEN durch einen zweiten Faktor geschützt sein.", level: "normal-SdT", threats: "G 0.40",
+	{id: "BER.5.9",
 		status: "implemented", check: "mfa", basis: "Alle Administrationszugänge verlangen einen zweiten Faktor.", found: "snsssss"},
-	{id: "DET.5.3", title: "Schwachstellenscans", text: "Die Institution MUSS ihre Systeme regelmäßig auf bekannte Schwachstellen prüfen.", level: "normal-SdT", threats: "G 0.28",
+	{id: "DET.5.3",
 		status: "implemented", check: "vuln-scan", basis: "Wöchentlicher Scan, Ergebnisse im Ticketsystem.", found: "sssssss"},
-	{id: "DET.5.10", title: "Zeitnahes Patchmanagement", text: "Sicherheitsupdates MÜSSEN innerhalb von 14 Tagen eingespielt werden.", level: "normal-SdT", threats: "G 0.28",
+	{id: "DET.5.10",
 		status: "planned", check: "vuln-scan", basis: "Fristen sind noch nicht überwacht.", nf: "temporary", action: "I-5: Patchfristen im Scan überwachen", resp: "Betrieb", due: "2026-11-15", found: "sssssss"},
-	{id: "DEV.2.4", title: "Einschränkung Zugriffs auf Quellcode", text: "Der Zugriff auf Quellcode MUSS auf die Beteiligten des Projekts beschränkt sein.", level: "normal-SdT", threats: "G 0.43",
+	{id: "DEV.2.4",
 		status: "partial", check: "repo-access", basis: "Zwei Repositories sind noch für alle Entwickler lesbar.", nf: "temporary", action: "I-4: Lesezugriff auf zwei Repositories entziehen", resp: "Entwicklung", due: "2026-11-30", found: "nsnnsss"},
-	{id: "DEV.4.3", title: "Softwarebestandteile (SBOM)", text: "Die Softwarebestandteile einer Anwendung MÜSSEN erfasst und auf Schwachstellen geprüft werden.", level: "normal-SdT", threats: "G 0.39",
+	{id: "DEV.4.3",
 		status: "partial", check: "sbom", basis: "Erfasst sind erst die Hälfte der Anwendungen.", nf: "temporary", action: "I-6: Restliche Anwendungen erfassen", resp: "Entwicklung", due: "2026-10-24", found: "nnnnnnn"},
-	{id: "KONF.14.1", title: "Verschlüsselung beim Transport", text: "Daten MÜSSEN beim Transport über Netze verschlüsselt werden.", level: "normal-SdT", threats: "G 0.43",
+	{id: "KONF.14.1",
 		status: "implemented", check: "tls-endpoints", basis: "Alle öffentlichen Endpunkte sprechen TLS.", found: "sssssss"},
-	{id: "KONF.14.1.1", title: "Obligatorische Verschlüsselung", text: "Konfiguration für Anwendungen SOLLTE unverschlüsselte und anfällige Verbindungen über Netze deaktivieren.", level: "normal-SdT", threats: "G 0.43",
+	{id: "KONF.14.1.1",
 		status: "implemented", check: "tls-endpoints", basis: "HTTP leitet auf HTTPS um, HSTS ist gesetzt.", found: "nnsnsss"},
-	{id: "TEST.4.1", title: "Autorisierung von Änderungen", text: "Änderungen an produktiven Systemen MÜSSEN von einer berechtigten Person freigegeben werden.", level: "normal-SdT", threats: "G 0.45",
+	{id: "TEST.4.1",
 		status: "partial", check: "repo-access", basis: "Notfalländerungen des Hosters werden nachträglich freigegeben.", nf: "permanent", risk: "R-021", found: "ssnnnnn"},
 }
 
-var notApplicable = [][3]string{
-	{"DET.5.12", "Überwachung von Cloud-Diensten", "Example GmbH nutzt keine Cloud-Dienste für Geschäftsprozesse."},
-	{"BER.5.12", "Berechtigungen für Mobilgeräte", "Es gibt keine Mobilgeräte der Firma."},
-}
-
-func ctl(id, title, text, level, threats string, sub ...any) m {
-	return m{"id": id, "title": title, "params": []any{},
-		"props":    []any{prop("sec_level", level), prop("threats", threats)},
-		"parts":    []any{m{"name": "statement", "prose": text, "props": []any{prop("modal_verb", modal(text))}}},
-		"controls": sub}
-}
-
-func modal(t string) string {
-	for _, v := range []string{"MÜSSEN", "MUSS", "SOLLTEN", "SOLLTE", "KANN"} {
-		if strings.Contains(t, " "+v+" ") {
-			return v
-		}
-	}
-	return ""
+var notApplicable = [][2]string{
+	{"ARCH.2.2.5", "Example GmbH betreibt keine OT-Systeme."},
+	{"KONF.3.3", "Es gibt keine Mobilgeräte mit SIM-Karte in der Firma."},
 }
 
 func main() {
@@ -114,31 +104,18 @@ func main() {
 	if err := os.RemoveAll(root); err != nil {
 		panic(err)
 	}
-	by := map[string]req{}
-	for _, r := range reqs {
-		by[r.id] = r
+	var cat m
+	if err := json.Unmarshal(catalogJSON, &cat); err != nil {
+		panic(err)
 	}
-	c := func(id string) m { r := by[id]; return ctl(r.id, r.title, r.text, r.level, r.threats) }
-	konf := ctl("KONF.14.1", by["KONF.14.1"].title, by["KONF.14.1"].text, "normal-SdT", "G 0.43", c("KONF.14.1.1"))
-	var na []any
-	for _, n := range notApplicable {
-		na = append(na, ctl(n[0], n[1], "Die Institution SOLLTE hier etwas regeln.", "normal-SdT", "G 0.1"))
+	catSum := write("lib/catalog.json", cat)
+	for id, verb := range modals(cat) {
+		for _, r := range reqs {
+			if r.id == id && r.nf == "permanent" && verb != "SOLLTE" && verb != "KANN" {
+				panic(id + " is a " + verb + " and cannot be a permanent nonfulfilment (BSI-Standard 300-1, 4.1.2)")
+			}
+		}
 	}
-	group := func(id, title string, sub ...any) m {
-		return m{"id": id, "title": title, "groups": sub}
-	}
-	leaf := func(id, title string, controls ...any) m { return m{"id": id, "title": title, "controls": controls} }
-	catSum := write("lib/catalog.json", m{"catalog": m{
-		"uuid": "00000000-0000-4000-8000-000000000001", "metadata": m{"title": "Grundschutz++ (Auszug für das Beispiel)"},
-		"groups": []any{
-			group("ASST", "Informationen und Assets", leaf("ASST.2", "Softwarebestand", c("ASST.2.3.2"))),
-			group("BER", "Berechtigung", leaf("BER.5", "Privilegierte Zugänge", c("BER.5.9"), na[1])),
-			group("DET", "Detektion", leaf("DET.5", "Schwachstellen", c("DET.5.3"), c("DET.5.10"), na[0])),
-			group("DEV", "Entwicklung", leaf("DEV.2", "Quellcode", c("DEV.2.4")), leaf("DEV.4", "Bestandteile", c("DEV.4.3"))),
-			group("KONF", "Konfiguration", leaf("KONF.14", "Verteilte Anwendungen", konf)),
-			group("TEST", "Änderungen und Tests", leaf("TEST.4", "Freigabe", c("TEST.4.1"))),
-		},
-	}})
 
 	var ids []string
 	for _, r := range reqs {
@@ -146,7 +123,7 @@ func main() {
 	}
 	naRes := []any{res("cat", "catalog.json", catSum)}
 	for _, n := range notApplicable {
-		naRes = append(naRes, m{"uuid": "na-" + n[0], "description": n[2],
+		naRes = append(naRes, m{"uuid": "na-" + n[0], "description": n[1],
 			"props": []any{prop("control-id", n[0]), prop("tailoring", "not-applicable")}})
 	}
 	profSum := write("lib/profile.json", m{"profile": m{
@@ -252,3 +229,34 @@ func main() {
 		}})
 	}
 }
+
+// modals returns the modal verb of every control of the catalog.
+func modals(v any) map[string]string {
+	out := map[string]string{}
+	var walk func(v any)
+	walk = func(v any) {
+		switch x := v.(type) {
+		case map[string]any:
+			if id, ok := x["id"].(string); ok {
+				for _, p := range list(x["parts"]) {
+					for _, pr := range list(p.(map[string]any)["props"]) {
+						if pr := pr.(map[string]any); pr["name"] == "modal_verb" {
+							out[id], _ = pr["value"].(string)
+						}
+					}
+				}
+			}
+			for _, c := range x {
+				walk(c)
+			}
+		case []any:
+			for _, c := range x {
+				walk(c)
+			}
+		}
+	}
+	walk(v)
+	return out
+}
+
+func list(v any) []any { l, _ := v.([]any); return l }

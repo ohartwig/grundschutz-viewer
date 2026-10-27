@@ -33,7 +33,11 @@ The screenshots show a made-up company, Example GmbH: seven nights of the
 worksheets chain with the five
 [grundschutz-checks](https://github.com/ohartwig/grundschutz-checks), an owner
 review and an improvement register. The page is in German, like the catalog.
-`sh tools/screenshots.sh` rebuilds the example and the images.
+The requirements in them are the BSI's, an excerpt of the Grundschutz++
+catalog from the
+[Stand-der-Technik-Bibliothek](https://github.com/BSI-Bund/Stand-der-Technik-Bibliothek)
+under CC BY-SA 4.0. `sh tools/screenshots.sh` rebuilds the example and the
+images.
 
 ## Download
 
