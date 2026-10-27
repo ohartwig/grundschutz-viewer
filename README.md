@@ -12,6 +12,11 @@ profile and the catalog, checking the SHA-256 it names. Which catalog, which
 commit of the BSI library and which parameter values apply comes from the
 profile, not from the viewer.
 
+The whole chain, run nightly, is in
+[grundschutz-starter](https://github.com/ohartwig/grundschutz-starter), a
+template to copy. The checks that measure the requirements are in
+[grundschutz-checks](https://github.com/ohartwig/grundschutz-checks).
+
 ![The explorer: filters, the requirements, and the state of the newest run with every run before it](docs/explorer-overview.png)
 
 One requirement with its history: the measured state per run, oldest left,
@@ -28,6 +33,7 @@ The screenshots show a made-up company, Example GmbH: seven nights of the
 worksheets chain with the five
 [grundschutz-checks](https://github.com/ohartwig/grundschutz-checks), an owner
 review and an improvement register. The page is in German, like the catalog.
+`sh tools/screenshots.sh` rebuilds the example and the images.
 
 ## Download
 
