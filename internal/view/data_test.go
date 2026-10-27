@@ -61,13 +61,15 @@ func chain(t *testing.T) string {
 		"back-matter": map[string]any{"resources": []any{res("cat", "catalog.json", catSum),
 			map[string]any{"uuid": "na", "description": "gibt es nicht", "props": []any{map[string]any{"name": "control-id", "value": "GC.1.3"}, map[string]any{"name": "tailoring", "value": "not-applicable"}}}}},
 	}})
-	ssp := func(dir, stamp, st2 string) {
+	prop := func(name, value string) map[string]any { return map[string]any{"name": name, "value": value} }
+	ssp := func(dir, stamp, st2 string, more ...any) {
+		props2 := append([]any{prop("implementation-status", st2)}, more...)
 		sspSum := write(dir+"/security-plan.json", map[string]any{"system-security-plan": map[string]any{
 			"uuid": "s", "metadata": map[string]any{"title": "Plan", "last-modified": stamp},
 			"import-profile": map[string]any{"href": "#prof"},
 			"control-implementation": map[string]any{"implemented-requirements": []any{
-				map[string]any{"control-id": "GC.1.1", "props": []any{map[string]any{"name": "implementation-status", "value": "implemented"}}},
-				map[string]any{"control-id": "GC.1.2", "props": []any{map[string]any{"name": "implementation-status", "value": st2}}},
+				map[string]any{"control-id": "GC.1.1", "props": []any{prop("implementation-status", "implemented"), prop("reviewed", "2026-10-01"), prop("reviewed-by", "CISO")}},
+				map[string]any{"control-id": "GC.1.2", "props": props2},
 			}},
 			"back-matter": map[string]any{"resources": []any{res("prof", "../../lib/profile.json", profSum)}},
 		}})
@@ -83,7 +85,7 @@ func chain(t *testing.T) string {
 				"uuid": "r", "metadata": map[string]any{"title": check, "last-modified": stamp},
 				"import-ap": map[string]any{"href": "#ap"},
 				"results": []any{map[string]any{"title": check, "start": stamp, "end": stamp,
-					"props":             []any{map[string]any{"name": "check", "value": check}},
+					"props":             []any{prop("check", check), prop("performed-by", "Pipeline "+check)},
 					"reviewed-controls": map[string]any{"control-selections": []any{map[string]any{"include-controls": []any{map[string]any{"control-id": target}}}}},
 					"findings":          []any{map[string]any{"title": target, "target": map[string]any{"target-id": target, "status": map[string]any{"state": state}}}}}},
 				"back-matter": map[string]any{"resources": []any{res("ap", strings.Repeat("../", strings.Count(rel, "/"))+"assessment-plan.json", apSum)}},
@@ -95,9 +97,20 @@ func chain(t *testing.T) string {
 		}
 		result("results-isms.json", "isms", "GC.1.1", state)
 		result("trial/results-roles.json", "roles", "GC.1.2", "satisfied")
+		// The POA&M as poam.mjs writes it: GC.1.2 permanently unfulfilled
+		// with an approved residual risk is a deviation without an action.
+		write(dir+"/poam.json", map[string]any{"plan-of-action-and-milestones": map[string]any{
+			"uuid": "m", "metadata": map[string]any{"title": "POA&M", "last-modified": stamp, "props": []any{prop("items-deviation-approved", "1")}},
+			"import-ssp": map[string]any{"href": "#ssp"},
+			"risks":      []any{map[string]any{"uuid": "r2", "title": "GC.1.2 not fully in place", "status": "deviation-approved"}},
+			"poam-items": []any{map[string]any{"title": "GC.1.2 (" + st2 + ")", "props": []any{prop("control-id", "GC.1.2"), prop("nonfulfilment", "permanent")},
+				"related-risks": []any{map[string]any{"risk-uuid": "r2"}}}},
+			"back-matter": map[string]any{"resources": []any{res("ssp", "security-plan.json", sspSum)}},
+		}})
 	}
 	ssp("runs/1", "2026-10-02T06:00:00Z", "planned")
-	ssp("runs/2", "2026-10-03T06:00:00Z", "partial")
+	ssp("runs/2", "2026-10-03T06:00:00Z", "partial", prop("nonfulfilment", "permanent"), prop("risk-analysis", "R-021"),
+		prop("residual-risk-approved", "2026-10-02"), prop("residual-risk-approved-by", "Geschäftsführung"))
 	// Not OSCAL: a check's raw output next to the results.
 	write("runs/2/run-isms.json", map[string]any{"check": "isms", "subjects": []any{}})
 	return root
@@ -191,5 +204,54 @@ func TestRenderEmbedsData(t *testing.T) {
 		if strings.Contains(string(page), "/*__DATA__*/") || strings.Contains(string(page), "</script><b>") {
 			t.Errorf("%s: data slot left or script closed early", v)
 		}
+	}
+}
+
+// BSI-Standard 300-1 (4.1.2): an approved permanent nonfulfilment is a
+// decision, not a plan item that lacks its action.
+func TestApprovedDeviation(t *testing.T) {
+	d := build(t, chain(t))
+
+	r := d.Reqs["GC.1.2"]
+	if r.NF != "permanent" || r.Risk != "R-021" || r.Appr != "2026-10-02" || r.ApprBy != "Geschäftsführung" {
+		t.Errorf("nonfulfilment not taken from the plan: %+v", r)
+	}
+	if !r.Dev || r.POAM == nil || !r.POAM.Dev || r.POAM.NA {
+		t.Errorf("GC.1.2 must be an approved deviation, not an item without an action: %+v %+v", r, r.POAM)
+	}
+	if g := d.Reqs["GC.1.1"]; g.Dev || g.NF != "" || g.Rev != "2026-10-01" || g.RevBy != "CISO" {
+		t.Errorf("GC.1.1: %+v, want reviewed by the CISO and no deviation", g)
+	}
+	if d.By["isms"] != "Pipeline isms" || d.By["roles"] != "Pipeline roles" {
+		t.Errorf("performed-by per check = %v", d.By)
+	}
+}
+
+func TestPOAMActionsAndDeviations(t *testing.T) {
+	var p oscal.POAM
+	if err := json.Unmarshal([]byte(`{
+		"risks": [
+			{"uuid": "a", "status": "open", "deadline": "2026-11-30T23:59:59Z",
+			 "remediations": [{"title": "I-7: Tags schützen", "props": [{"name": "responsible", "value": "Plattform-Team"}]}]},
+			{"uuid": "b", "status": "open"},
+			{"uuid": "c", "status": "deviation-approved"}
+		],
+		"poam-items": [
+			{"props": [{"name": "control-id", "value": "A.1"}], "related-risks": [{"risk-uuid": "a"}]},
+			{"props": [{"name": "control-id", "value": "A.2"}, {"name": "no-action", "value": "true"}], "related-risks": [{"risk-uuid": "b"}]},
+			{"props": [{"name": "control-id", "value": "A.3"}, {"name": "nonfulfilment", "value": "permanent"}], "related-risks": [{"risk-uuid": "c"}]}
+		]}`), &p); err != nil {
+		t.Fatal(err)
+	}
+	got := poamOf(&p)
+
+	if a := got["A.1"]; a.NA || a.Dev || *a.DL != "2026-11-30" || !slices.Equal(a.A, []Action{{ID: "I-7", X: "Tags schützen", Resp: "Plattform-Team"}}) {
+		t.Errorf("A.1 = %+v", a)
+	}
+	if a := got["A.2"]; !a.NA || a.Dev {
+		t.Errorf("A.2 has no action and is no deviation: %+v", a)
+	}
+	if a := got["A.3"]; a.NA || !a.Dev || len(a.A) != 0 {
+		t.Errorf("A.3 is an approved deviation: %+v", a)
 	}
 }
