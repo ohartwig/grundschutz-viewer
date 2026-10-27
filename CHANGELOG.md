@@ -1,3 +1,36 @@
+## [0.3.2](https://github.com/ohartwig/grundschutz-viewer/compare/v0.2.4...v0.3.2) (2026-10-27)
+
+### :sparkles: Features
+
+* show the states of BSI-Standard 300-1 and approved deviations
+
+### :memo: Documentation
+
+* example with the real catalog, deviation on a SOLLTE
+* screenshots in the 300-1 states
+
+### :repeat: Continuous Integrations
+
+* the mirror drops the paths of private images and components
+* **deps:** update code-signing docker tag to v1.3.84
+* **deps:** update code-signing docker tag to v1.3.83
+* **deps:** update code-signing docker tag to v1.3.82
+* **deps:** update code-signing docker tag to v1.3.81
+* **deps:** update code-signing docker tag to v1.3.80
+* **deps:** update code-signing docker tag to v1.3.79
+* follow components on the rolling major tag
+* **deps:** update dependency lint-tools to v1.40.43
+* **deps:** update dependency lint-tools to v1.40.42
+* **deps:** update dependency lint-tools to v1.40.41
+* **deps:** update code-signing docker tag to v1.3.78
+* **deps:** update dependency lint-tools to v1.40.40
+* **deps:** update dependency lint-tools to v1.40.39
+* **deps:** update dependency lint-tools to v1.40.38
+* **deps:** update code-signing docker tag to v1.3.77
+* **deps:** update dependency lint-tools to v1.40.36
+* **deps:** update dependency lint-tools to v1.40.34
+* **deps:** update dependency lint-tools to v1.40.33
+
 ## [0.3.1](https://github.com/ohartwig/grundschutz-viewer/compare/v0.2.4...v0.3.1) (2026-10-27)
 
 ### :sparkles: Features
