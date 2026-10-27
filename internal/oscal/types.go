@@ -198,11 +198,13 @@ type POAM struct {
 	Risks     []struct {
 		UUID         string `json:"uuid"`
 		Title        string `json:"title"`
+		Status       string `json:"status"`
 		Deadline     string `json:"deadline"`
 		Remediations []struct {
 			Title       string `json:"title"`
 			Description string `json:"description"`
 			Lifecycle   string `json:"lifecycle"`
+			Props       []Prop `json:"props"`
 		} `json:"remediations"`
 	} `json:"risks"`
 	PoamItems []struct {

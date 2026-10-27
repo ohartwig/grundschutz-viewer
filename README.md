@@ -77,6 +77,29 @@ The newest run is the state the page shows; every run adds a point to the
 history: per requirement the plan's status and the measured state, and per run
 what changed against the run before.
 
+### States
+
+The page follows [BSI-Standard
+300-1](https://www.bsi.bund.de/SharedDocs/Downloads/DE/BSI/Grundschutz/BSI_Standards/standard_300-1.pdf)
+(4.1), the method of Grundschutz++, which knows three states: a requirement
+the plan calls implemented is *erfüllt*; partial and planned are both *nicht
+erfüllt*, with *teilweise* or *geplant* as the detail; a requirement the
+profile leaves out is *nicht anwendbar*, shown with its reason in both
+layouts. Where the plan says whether a nonfulfilment is temporary or
+permanent, the page shows *temporär* or *dauerhaft*.
+
+A permanent nonfulfilment whose residual risk the leadership approved is an
+approved deviation: the POA&M gives its risk the status `deviation-approved`
+and no action. The page shows it as *Abweichung genehmigt*, with the date of
+the approval, who gave it and the risk analysis, and counts it apart; it is
+never listed as an item without an action.
+
+Where the documents name them, the page also shows who reviewed a
+requirement and when (`reviewed`, `reviewed-by` in the plan), who is
+responsible for an action (`responsible` on a POA&M remediation) and who
+performed a check (`performed-by` on a result). Older files without them are
+shown as before.
+
 ### Imports
 
 Each import is looked up next to the importing file, then by its SHA-256

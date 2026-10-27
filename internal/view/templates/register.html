@@ -140,7 +140,7 @@ td.n { font-variant-numeric: tabular-nums; white-space: nowrap; }
   <div class="work">
     <aside class="reg" aria-label="Verzeichnis der Anforderungen">
       <div class="legend">
-        <span><i class="sq I"></i>umgesetzt</span><span><i class="sq P"></i>teilweise</span><span><i class="sq L"></i>geplant</span><span><i class="sq I m"></i>gemessen</span><span><i class="sq L od"></i>Termin überschritten</span>
+        <span><i class="sq I"></i>erfüllt</span><span><i class="sq P"></i>nicht erfüllt, teilweise</span><span><i class="sq L"></i>nicht erfüllt, geplant</span><span><i class="sq I m"></i>gemessen</span><span><i class="sq L od"></i>Termin überschritten</span>
       </div>
       <div class="filters" id="filters" role="group" aria-label="Hervorheben"></div>
       <div id="reg"></div>
@@ -154,7 +154,12 @@ const D = /*__DATA__*/null;
 const THREAT = {"G 0.1":"Feuer","G 0.2":"Ungünstige klimatische Bedingungen","G 0.3":"Wasser","G 0.4":"Verschmutzung, Staub, Korrosion","G 0.5":"Naturkatastrophen","G 0.6":"Katastrophen im Umfeld","G 0.7":"Großereignisse im Umfeld","G 0.8":"Ausfall oder Störung der Stromversorgung","G 0.9":"Ausfall oder Störung von Kommunikationsnetzen","G 0.10":"Ausfall oder Störung von Versorgungsnetzen","G 0.11":"Ausfall oder Störung von Dienstleistern","G 0.12":"Elektromagnetische Störstrahlung","G 0.13":"Abfangen kompromittierender Strahlung","G 0.14":"Ausspähen von Informationen (Spionage)","G 0.15":"Abhören","G 0.16":"Diebstahl von Geräten, Datenträgern oder Dokumenten","G 0.17":"Verlust von Geräten, Datenträgern oder Dokumenten","G 0.18":"Fehlplanung oder fehlende Anpassung","G 0.19":"Offenlegung schützenswerter Informationen","G 0.20":"Informationen oder Produkte aus unzuverlässiger Quelle","G 0.21":"Manipulation von Hard- oder Software","G 0.22":"Manipulation von Informationen","G 0.23":"Unbefugtes Eindringen in IT-Systeme","G 0.24":"Zerstörung von Geräten oder Datenträgern","G 0.25":"Ausfall von Geräten oder Systemen","G 0.26":"Fehlfunktion von Geräten oder Systemen","G 0.27":"Ressourcenmangel","G 0.28":"Software-Schwachstellen oder -Fehler","G 0.29":"Verstoß gegen Gesetze oder Regelungen","G 0.30":"Unberechtigte Nutzung oder Administration von Geräten und Systemen","G 0.31":"Fehlerhafte Nutzung oder Administration von Geräten und Systemen","G 0.32":"Missbrauch von Berechtigungen","G 0.33":"Personalausfall","G 0.34":"Anschlag","G 0.35":"Nötigung, Erpressung oder Korruption","G 0.36":"Identitätsdiebstahl","G 0.37":"Abstreiten von Handlungen","G 0.38":"Missbrauch personenbezogener Daten","G 0.39":"Schadprogramme","G 0.40":"Verhinderung von Diensten (Denial of Service)","G 0.41":"Sabotage","G 0.42":"Social Engineering","G 0.43":"Einspielen von Nachrichten","G 0.44":"Unbefugtes Eindringen in Räumlichkeiten","G 0.45":"Datenverlust","G 0.46":"Integritätsverlust schützenswerter Informationen","G 0.47":"Schädliche Seiteneffekte IT-gestützter Angriffe"};
 const ISO_THEME = {"5":"Organisatorische Maßnahmen","6":"Personenbezogene Maßnahmen","7":"Physische Maßnahmen","8":"Technologische Maßnahmen"};
 const REL = {"equivalent-to":"gleichwertig","subset-of":"Teilmenge","intersects-with":"überschneidend","superset-of":"Obermenge"};
-const ST = {I: "umgesetzt", P: "teilweise umgesetzt", L: "geplant", "-": "ohne Angabe"};
+// Stand nach BSI-Standard 300-1 (4.1): erfüllt, nicht erfüllt, nicht anwendbar. Teilweise und geplant bleiben als Einzelheit.
+const ST = {I: "erfüllt", P: "nicht erfüllt, teilweise", L: "nicht erfüllt, geplant", "-": "ohne Angabe"};
+const NF = {temporary: "temporär", permanent: "dauerhaft"};
+const stLabel = r => ST[r.st] + (r.st !== "I" && NF[r.nf] ? ", " + NF[r.nf] : "");
+const devText = r => `Abweichung genehmigt: dauerhaft nicht erfüllt, Restrisiko${r.appr ? " am " + de(r.appr) : ""}${r.apprBy ? " von " + r.apprBy : ""} genehmigt${r.risk ? ", Risikoanalyse " + r.risk : ""}.`;
+const actRow = a => `<div><span class="id">${esc(a.id)}</span> ${esc(a.x)}${a.resp ? ` <span class="small">verantwortlich: ${esc(a.resp)}</span>` : ""}</div>`;
 const CATURL = D.catalogUrl || "#";
 
 const R = D.reqs, TODAY = D.run.date;
@@ -171,7 +176,7 @@ const gid = t => "g-" + t.slice(2);
 function ref(id, note) {
   const r = R[id], e = D.ext[id];
   const t = r ? r.t : e ? e.t : "";
-  const q = r ? ST[r.st] + (r.m ? ", gemessen" : "") : e ? "nicht im Profil" : "nicht im Katalog-Auszug";
+  const q = r ? stLabel(r) + (r.m ? ", gemessen" : "") : D.na[id] !== undefined ? "nicht anwendbar" : e ? "nicht im Profil" : "nicht im Katalog-Auszug";
   const a = (r || e) ? `<a class="id" href="#${esc(id)}">${esc(id)}</a>` : `<span class="id">${esc(id)}</span>`;
   return `<div class="ref">${glyph(id)}${a}<span class="t">${esc(t)}</span><span class="q">${esc(q)}${note ? " · " + esc(note) : ""}</span></div>`;
 }
@@ -185,9 +190,15 @@ const cnt = k => ids.filter(i => R[i].st === k).length;
 const meas = ids.filter(i => R[i].m).length;
 const pItems = ids.filter(i => R[i].poam);
 const od = ids.filter(overdue);
+const devs = ids.filter(i => R[i].dev);
+const nas = Object.keys(D.na).sort(byNum);
+const nfc = k => ids.filter(i => R[i].st !== "I" && R[i].nf === k).length;
 document.getElementById("sum").innerHTML =
-  `<b class="num">${cnt("I")}</b> von ${n} Anforderungen sind umgesetzt, <b class="num">${cnt("P")}</b> teilweise, <b class="num">${cnt("L")}</b> geplant. ` +
+  `<b class="num">${cnt("I")}</b> von ${n} Anforderungen sind erfüllt, <b class="num">${cnt("P") + cnt("L")}</b> nicht erfüllt (${cnt("P")} teilweise, ${cnt("L")} geplant` +
+  (nfc("temporary") + nfc("permanent") ? `; ${nfc("temporary")} temporär, ${nfc("permanent")} dauerhaft` : "") + `). ` +
+  (nas.length ? `<a href="#nicht-anwendbar"><b class="num">${nas.length}</b> weitere sind nicht anwendbar</a>. ` : "") +
   `<b class="num">${meas}</b> sind durch eine Prüfung gemessen. Der Maßnahmenplan hat <b class="num">${pItems.length}</b> Punkte` +
+  (devs.length ? `, davon <b class="num">${devs.length}</b> genehmigte Abweichungen` : "") +
   (od.length ? `, bei <a href="#massnahmen" class="bad">${od.length} ist der Termin überschritten</a>.` : ".");
 (function runs() {
   const svg = document.getElementById("runsvg"), W = 420, H = 34, rs = D.runs;
@@ -204,7 +215,7 @@ document.getElementById("sum").innerHTML =
 })();
 
 // Verzeichnis
-const FILTERS = [["alle", "Alle", () => true], ["luecke", "Lücken", i => R[i].st !== "I"], ["gemessen", "Gemessen", i => R[i].m], ["termin", "Termin überschritten", overdue], ["ohne", "Ohne Maßnahme", i => R[i].poam?.na]];
+const FILTERS = [["alle", "Alle", () => true], ["luecke", "Lücken", i => R[i].st !== "I"], ["gemessen", "Gemessen", i => R[i].m], ["termin", "Termin überschritten", overdue], ["ohne", "Ohne Maßnahme", i => R[i].poam?.na], ["abw", "Abweichung genehmigt", i => R[i].dev]];
 let filt = "alle";
 try { filt = localStorage.getItem("reg-filter") || "alle"; } catch (e) {}
 const practices = [];
@@ -218,7 +229,7 @@ function drawReg(cur) {
     const done = p.ids.filter(i => R[i].st === "I").length;
     return `<div class="prac"><div class="lbl"><span class="id">${esc(p.g)}</span>${esc(p.gt)}</div><div class="cells">` +
       p.ids.map(i => `<a href="#${i}" title="${esc(i + " " + R[i].t + " · " + ST[R[i].st])}" aria-label="${esc(i + " " + R[i].t)}"${i === cur ? ' aria-current="true"' : ""} class="${test(i) ? "" : "dim"}">${glyph(i)}</a>`).join("") +
-      `</div><div class="cnt">${done} von ${p.ids.length} umgesetzt</div></div>`;
+      `</div><div class="cnt">${done} von ${p.ids.length} erfüllt</div></div>`;
   }).join("");
 }
 document.getElementById("filters").addEventListener("click", e => {
@@ -232,10 +243,11 @@ function viewReq(id) {
   const r = R[id];
   const pm = r.poam;
   let plan = `<span class="none">kein Punkt</span>`;
-  if (pm) plan = pm.na ? `<span class="warn">Im Plan, aber ohne Maßnahme und ohne Termin</span>` :
-    (pm.a.map(a => `<div><span class="id">${esc(a.id)}</span> ${esc(a.x)}</div>`).join("") +
+  if (r.dev) plan = `<div>${esc(devText(r))}</div>` + (pm ? pm.a.map(actRow).join("") : "");
+  else if (pm) plan = pm.na ? `<span class="warn">Im Plan, aber ohne Maßnahme und ohne Termin</span>` :
+    (pm.a.map(actRow).join("") +
      (pm.dl ? `<div class="${pm.dl < TODAY ? "bad" : "small"}">Termin ${de(pm.dl)}${pm.dl < TODAY ? ", überschritten" : ""}</div>` : ""));
-  const chk = r.c.length ? r.c.map(c => `<div class="ref"><a class="id" href="#check-${esc(c)}">${esc(c)}</a><span class="t">${esc(checkSet.get(c)?.t || "")}</span>${trial.has(c) ? '<span class="tag">auf Probe</span>' : ""}</div>`).join("") : `<span class="none">keine Prüfung</span>`;
+  const chk = r.c.length ? r.c.map(c => `<div class="ref"><a class="id" href="#check-${esc(c)}">${esc(c)}</a><span class="t">${esc(checkSet.get(c)?.t || "")}</span>${trial.has(c) ? '<span class="tag">auf Probe</span>' : ""}${D.by[c] ? `<span class="q">durchgeführt von ${esc(D.by[c])}</span>` : ""}</div>`).join("") : `<span class="none">keine Prüfung</span>`;
   const isoL = r.iso.length ? r.iso.map(x => `<div class="ref"><a class="id" href="#iso-${x.id}">A.${x.id}</a><span class="t">${ISO_THEME[x.id.split(".")[0]]}</span><span class="q">${REL[x.rel] || x.rel}</span></div>`).join("") : `<span class="none">keine Zuordnung im Mapping</span>`;
   const thr = r.thr.length ? r.thr.map(t => `<div class="ref"><a class="id" href="#${gid(t)}">${esc(t)}</a><span class="t">${esc(THREAT[t] || "")}</span></div>`).join("") : `<span class="none">keine</span>`;
   return `
@@ -244,7 +256,7 @@ function viewReq(id) {
     <p class="lead">${esc(r.stm).replace(/\b(MUSS|SOLLTE|KANN)\b/, '<span class="mv">$1</span>')}</p>
     ${r.gdn ? `<details class="hint"><summary>Umsetzungshinweise des BSI</summary><p>${esc(r.gdn)}</p></details>` : ""}
     <dl class="facts">
-      <dt>Stand im Plan</dt><dd><div class="ref">${glyph(id)}<span>${ST[r.st]}${r.m ? ", durch Prüfung gemessen" : ", nicht gemessen"}</span></div></dd>
+      <dt>Stand im Plan</dt><dd><div class="ref">${glyph(id)}<span>${stLabel(r)}${r.m ? ", durch Prüfung gemessen" : ", nicht gemessen"}</span></div>${r.rev || r.revBy ? `<span class="small">Bewertet${r.rev ? " am " + de(r.rev) : ""}${r.revBy ? " von " + esc(r.revBy) : ""}</span>` : ""}</dd>
       <dt>Prüfungen</dt><dd>${chk}</dd>
       <dt>Maßnahmenplan</dt><dd>${plan}</dd>
       <dt>Gehört zu</dt><dd>${r.p ? ref(r.p) : `<span class="none">oberste Ebene in ${esc(r.s)}</span>`}</dd>
@@ -264,8 +276,8 @@ function viewExt(id) {
   return `<div class="crumb"><span>Katalog</span>${e.p ? `<span><a href="#${e.p}">${esc(e.p)}</a></span>` : ""}</div>
     <h1><span class="id">${esc(id)}</span>${esc(e.t)}</h1>
     <p class="lead">${esc(e.stm)}</p>
-    <p class="small">Diese Anforderung ist nicht im Profil des Systems. Es gibt für sie keinen Stand, keine Prüfung und keinen Maßnahmenplan.</p>
-    <dl class="facts"><dt>Bezug aus dem Profil</dt><dd>${list(back)}</dd></dl>`;
+    ${D.na[id] !== undefined ? `<p class="small">Nicht anwendbar laut Profil. Es gibt für sie keinen Stand, keine Prüfung und keinen Maßnahmenplan.</p>` : `<p class="small">Diese Anforderung ist nicht im Profil des Systems. Es gibt für sie keinen Stand, keine Prüfung und keinen Maßnahmenplan.</p>`}
+    <dl class="facts">${D.na[id] !== undefined ? `<dt>Begründung</dt><dd>${esc(D.na[id] || "keine angegeben")}</dd>` : ""}<dt>Bezug aus dem Profil</dt><dd>${list(back)}</dd></dl>`;
 }
 function viewCheck(cid) {
   const c = checkSet.get(cid);
@@ -289,7 +301,7 @@ function viewThreat(t) {
   const hit = ids.filter(i => R[i].thr.includes(t));
   return `<div class="crumb"><span><a href="#gefaehrdungen">Elementare Gefährdungen</a></span></div>
     <h1><span class="id">${esc(t)}</span>${esc(THREAT[t] || "")}</h1>
-    <p class="lead">${hit.length} Anforderungen im Profil nennen diese Gefährdung, ${hit.filter(i => R[i].st === "I").length} davon sind umgesetzt.</p>
+    <p class="lead">${hit.length} Anforderungen im Profil nennen diese Gefährdung, ${hit.filter(i => R[i].st === "I").length} davon sind erfüllt.</p>
     <dl class="facts"><dt>Anforderungen</dt><dd>${list(hit.sort((a, b) => "ILP".indexOf(R[b].st) - "ILP".indexOf(R[a].st) || byNum(a, b)))}</dd></dl>`;
 }
 function viewOverview() {
@@ -299,7 +311,14 @@ function viewOverview() {
   }).join("");
   return `<h1>Übersicht nach Praxis</h1>
     <p class="lead">Jedes Kästchen links ist eine Anforderung des Profils. Ein Klick öffnet sie mit Text, Prüfungen, Maßnahmen und allen Bezügen.</p>
-    <div class="tw"><table><thead><tr><th>Praxis</th><th>Anforderungen</th><th>umgesetzt</th><th>teilweise</th><th>geplant</th><th>gemessen</th><th>Termin überschritten</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    <div class="tw"><table><thead><tr><th>Praxis</th><th>Anforderungen</th><th>erfüllt</th><th>nicht erfüllt: teilweise</th><th>nicht erfüllt: geplant</th><th>gemessen</th><th>Termin überschritten</th></tr></thead><tbody>${rows}</tbody></table></div>${viewNA()}`;
+}
+function viewNA() {
+  if (!nas.length) return "";
+  return `<h2 id="nicht-anwendbar">Nicht anwendbar</h2><p class="lead">${nas.length} Anforderungen nimmt das Profil aus, jede mit ihrer Begründung.</p>
+    <div class="tw"><table><thead><tr><th>Anforderung</th><th>Begründung</th></tr></thead><tbody>` +
+    nas.map(i => `<tr><td>${D.ext[i] ? `<a class="id" href="#${esc(i)}">${esc(i)}</a>` : `<span class="id">${esc(i)}</span>`} <span class="small">${esc(D.ext[i]?.t || "")}</span></td><td>${esc(D.na[i] || "keine angegeben")}</td></tr>`).join("") +
+    `</tbody></table></div>`;
 }
 function viewChecks() {
   const all = [...D.checks.map(c => c.id), ...D.trial].sort(byNum);
@@ -311,23 +330,23 @@ function viewChecks() {
 }
 function viewPlan() {
   const rs = pItems.slice().sort((a, b) => (R[a].poam.dl || "9999").localeCompare(R[b].poam.dl || "9999") || byNum(a, b));
-  return `<h1>Maßnahmenplan</h1><p class="lead">${pItems.length} Punkte: ${pItems.filter(i => R[i].poam.dl).length} mit Termin, ${pItems.filter(i => R[i].poam.na).length} ohne Maßnahme. Sortiert nach Termin.</p>
+  return `<h1>Maßnahmenplan</h1><p class="lead">${pItems.length} Punkte: ${pItems.filter(i => R[i].poam.dl).length} mit Termin, ${pItems.filter(i => R[i].poam.na).length} ohne Maßnahme, ${pItems.filter(i => R[i].dev).length} genehmigte Abweichungen. Sortiert nach Termin.</p>
     <div class="tw"><table><thead><tr><th>Termin</th><th>Anforderung</th><th>Maßnahme</th></tr></thead><tbody>` +
     rs.map(i => { const p = R[i].poam;
-      return `<tr><td class="n ${overdue(i) ? "bad" : ""}">${p.dl ? de(p.dl) : "–"}</td><td><div class="ref">${glyph(i)}<a class="id" href="#${i}">${i}</a></div><span class="small">${esc(R[i].t)}</span></td><td>${p.na ? '<span class="warn">ohne Maßnahme</span>' : p.a.map(a => `<div><span class="id">${esc(a.id)}</span> ${esc(a.x)}</div>`).join("")}</td></tr>`; }).join("") +
+      return `<tr><td class="n ${overdue(i) ? "bad" : ""}">${p.dl ? de(p.dl) : "–"}</td><td><div class="ref">${glyph(i)}<a class="id" href="#${i}">${i}</a></div><span class="small">${esc(R[i].t)}</span></td><td>${R[i].dev ? `<div>${esc(devText(R[i]))}</div>` + p.a.map(actRow).join("") : p.na ? '<span class="warn">ohne Maßnahme</span>' : p.a.map(actRow).join("")}</td></tr>`; }).join("") +
     `</tbody></table></div>`;
 }
 function viewNorms() {
   const xs = Object.keys(D.iso).sort(byNum);
   return `<h1>ISO/IEC 27001:2022, Anhang A</h1><p class="lead">${xs.length} Controls des Anhangs führen laut BSI-Mapping zu Anforderungen dieses Profils.</p>
-    <div class="tw"><table><thead><tr><th>Control</th><th>Thema</th><th>im Profil</th><th>umgesetzt</th></tr></thead><tbody>` +
+    <div class="tw"><table><thead><tr><th>Control</th><th>Thema</th><th>im Profil</th><th>erfüllt</th></tr></thead><tbody>` +
     xs.map(x => { const t = D.iso[x].filter(y => R[y.id]); return `<tr><td><a class="id" href="#iso-${x}">A.${x}</a></td><td>${ISO_THEME[x.split(".")[0]]}</td><td class="n">${t.length}</td><td class="n">${t.filter(y => R[y.id].st === "I").length}</td></tr>`; }).join("") +
     `</tbody></table></div>`;
 }
 function viewThreats() {
   const ts = [...new Set(ids.flatMap(i => R[i].thr))].sort((a, b) => parseFloat(a.slice(2)) - parseFloat(b.slice(2)) || byNum(a, b));
   return `<h1>Elementare Gefährdungen</h1><p class="lead">Welche Gefährdungen die Anforderungen des Profils adressieren und wie weit sie umgesetzt sind.</p>
-    <div class="tw"><table><thead><tr><th>Gefährdung</th><th>Anforderungen</th><th>umgesetzt</th></tr></thead><tbody>` +
+    <div class="tw"><table><thead><tr><th>Gefährdung</th><th>Anforderungen</th><th>erfüllt</th></tr></thead><tbody>` +
     ts.map(t => { const h = ids.filter(i => R[i].thr.includes(t)); return `<tr><td><a class="id" href="#${gid(t)}">${esc(t)}</a> ${esc(THREAT[t] || "")}</td><td class="n">${h.length}</td><td class="n">${h.filter(i => R[i].st === "I").length}</td></tr>`; }).join("") +
     `</tbody></table></div>`;
 }
@@ -347,12 +366,14 @@ function route() {
   else if (h === "massnahmen") { html = viewPlan(); tab = "#massnahmen"; }
   else if (h === "normen") { html = viewNorms(); tab = "#normen"; }
   else if (h === "gefaehrdungen") { html = viewThreats(); tab = "#gefaehrdungen"; }
+  else if (h === "nicht-anwendbar") { html = viewOverview(); tab = "#"; }
   else { html = viewOverview(); tab = "#"; }
   const f = document.getElementById("file");
   f.innerHTML = html;
   document.querySelectorAll("#tabs a").forEach(a => { if (a.getAttribute("href") === tab) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current"); });
   drawReg(current);
-  if (h && f.getBoundingClientRect().top < 0) f.scrollIntoView({ block: "start" });
+  if (h === "nicht-anwendbar") document.getElementById(h)?.scrollIntoView({ block: "start" });
+  else if (h && f.getBoundingClientRect().top < 0) f.scrollIntoView({ block: "start" });
 }
 drawFilters();
 window.addEventListener("hashchange", route);

@@ -39,6 +39,7 @@ type Data struct {
 	Reqs       map[string]*Req   `json:"reqs"`
 	Ext        map[string]*Ext   `json:"ext"`
 	Checks     []Check           `json:"checks"`
+	By         map[string]string `json:"by"` // per check: who performed it in the current run, where the results say
 	Trial      []string          `json:"trial"`
 	ISO        map[string][]ISO  `json:"iso"`
 	NA         map[string]string `json:"na"`
@@ -99,6 +100,16 @@ type Req struct {
 	POAM   *POAM    `json:"poam"`
 	H      []string `json:"h"` // per run of Data.Runs: status letter and finding letter, e.g. "In"
 	Remark string   `json:"rm,omitempty"`
+	// BSI-Standard 300-1 (4.1.2): a requirement not fulfilled is so
+	// temporarily or permanently; a permanent one rests on a risk analysis
+	// whose residual risk the leadership approved.
+	NF     string `json:"nf,omitempty"`
+	Risk   string `json:"risk,omitempty"`
+	Appr   string `json:"appr,omitempty"`
+	ApprBy string `json:"apprBy,omitempty"`
+	Dev    bool   `json:"dev,omitzero"` // an approved deviation: no action is due
+	Rev    string `json:"rev,omitempty"`
+	RevBy  string `json:"revBy,omitempty"`
 }
 
 type Ext struct {
@@ -113,14 +124,16 @@ type ISO struct {
 }
 
 type POAM struct {
-	NA bool     `json:"na"`
-	DL *string  `json:"dl"`
-	A  []Action `json:"a"`
+	NA  bool     `json:"na"`           // in the plan without an action, and not by decision
+	Dev bool     `json:"dev,omitzero"` // the risk is an approved deviation
+	DL  *string  `json:"dl"`
+	A   []Action `json:"a"`
 }
 
 type Action struct {
-	ID string `json:"id"`
-	X  string `json:"x"`
+	ID   string `json:"id"`
+	X    string `json:"x"`
+	Resp string `json:"resp,omitempty"`
 }
 
 type Check struct {
@@ -160,7 +173,7 @@ type run struct {
 // state shown; all runs make the history.
 func Build(set *oscal.Set) (*Data, error) {
 	runs := groupRuns(set)
-	data := &Data{Reqs: map[string]*Req{}, Ext: map[string]*Ext{}, ISO: map[string][]ISO{}, NA: map[string]string{}, Params: map[string]string{}}
+	data := &Data{Reqs: map[string]*Req{}, Ext: map[string]*Ext{}, By: map[string]string{}, ISO: map[string][]ISO{}, NA: map[string]string{}, Params: map[string]string{}}
 
 	var cur *run
 	for _, r := range runs {
@@ -301,6 +314,9 @@ func Build(set *oscal.Set) (*Data, error) {
 		for _, ar := range cur.ars {
 			for _, res := range ar.AR.Results {
 				id := oscal.Value(res.Props, "check")
+				if by := oscal.Value(res.Props, "performed-by"); id != "" && by != "" {
+					data.By[id] = by
+				}
 				if id == "" || planned[id] {
 					continue
 				}
@@ -392,8 +408,10 @@ func Build(set *oscal.Set) (*Data, error) {
 		r := cat.req(id, data.Params)
 		ps := status[id]
 		r.St, r.M, r.Basis, r.Remark = ps.letter, ps.measured, ps.basis, ps.remark
+		r.NF, r.Risk, r.Appr, r.ApprBy, r.Rev, r.RevBy = ps.nf, ps.risk, ps.appr, ps.apprBy, ps.rev, ps.revBy
 		r.C = slices.Compact(sorted(covers[id]))
 		r.POAM = poams[id]
+		r.Dev = (r.POAM != nil && r.POAM.Dev) || (ps.nf == "permanent" && ps.appr != "")
 		r.H = hist[id]
 		r.ISO = data.isoFor(id)
 		data.Reqs[id] = r
@@ -475,6 +493,9 @@ func Build(set *oscal.Set) (*Data, error) {
 type planStatus struct {
 	letter, basis, remark string
 	measured              bool
+	// BSI-Standard 300-1: temporary or permanent nonfulfilment, the risk
+	// analysis and the approval of the residual risk; who reviewed it last.
+	nf, risk, appr, apprBy, rev, revBy string
 }
 
 func planOf(d *oscal.Doc) map[string]planStatus {
@@ -494,7 +515,10 @@ func planOf(d *oscal.Doc) map[string]planStatus {
 		// Measured: the plan's basis says so, or it carries the state of the
 		// latest assessment (ssp.mjs writes assessment-state next to a review).
 		measured := basis == "measured" || oscal.Value(ir.Props, "assessment-state") != ""
-		out[ir.ControlID] = planStatus{letter: cmp.Or(letter, "-"), basis: basis, remark: remark, measured: measured}
+		v := func(name string) string { return oscal.Value(ir.Props, name) }
+		out[ir.ControlID] = planStatus{letter: cmp.Or(letter, "-"), basis: basis, remark: remark, measured: measured,
+			nf: v("nonfulfilment"), risk: v("risk-analysis"), appr: v("residual-risk-approved"), apprBy: v("residual-risk-approved-by"),
+			rev: v("reviewed"), revBy: v("reviewed-by")}
 	}
 	return out
 }
@@ -540,6 +564,11 @@ func poamOf(p *oscal.POAM) map[string]*POAM {
 				continue
 			}
 			r := p.Risks[i]
+			// An approved deviation (BSI-Standard 300-1, 4.1.2) has no action
+			// on purpose; it is a decision, not a gap in the plan.
+			if r.Status == "deviation-approved" {
+				e.Dev = true
+			}
 			if len(r.Deadline) >= 10 {
 				dl := r.Deadline[:10]
 				if e.DL == nil || dl < *e.DL {
@@ -551,10 +580,11 @@ func poamOf(p *oscal.POAM) map[string]*POAM {
 				if m := actionRe.FindStringSubmatch(rem.Title); m != nil {
 					a = Action{ID: m[1], X: m[2]}
 				}
+				a.Resp = oscal.Value(rem.Props, "responsible")
 				e.A = append(e.A, a)
 			}
 		}
-		e.NA = len(e.A) == 0
+		e.NA = len(e.A) == 0 && !e.Dev
 	}
 	return out
 }

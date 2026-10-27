@@ -205,7 +205,13 @@ const D = /*__DATA__*/null;
 const THREAT = {"G 0.1":"Feuer","G 0.2":"Ungünstige klimatische Bedingungen","G 0.3":"Wasser","G 0.4":"Verschmutzung, Staub, Korrosion","G 0.5":"Naturkatastrophen","G 0.6":"Katastrophen im Umfeld","G 0.7":"Großereignisse im Umfeld","G 0.8":"Ausfall oder Störung der Stromversorgung","G 0.9":"Ausfall oder Störung von Kommunikationsnetzen","G 0.10":"Ausfall oder Störung von Versorgungsnetzen","G 0.11":"Ausfall oder Störung von Dienstleistern","G 0.12":"Elektromagnetische Störstrahlung","G 0.13":"Abfangen kompromittierender Strahlung","G 0.14":"Ausspähen von Informationen (Spionage)","G 0.15":"Abhören","G 0.16":"Diebstahl von Geräten, Datenträgern oder Dokumenten","G 0.17":"Verlust von Geräten, Datenträgern oder Dokumenten","G 0.18":"Fehlplanung oder fehlende Anpassung","G 0.19":"Offenlegung schützenswerter Informationen","G 0.20":"Informationen oder Produkte aus unzuverlässiger Quelle","G 0.21":"Manipulation von Hard- oder Software","G 0.22":"Manipulation von Informationen","G 0.23":"Unbefugtes Eindringen in IT-Systeme","G 0.24":"Zerstörung von Geräten oder Datenträgern","G 0.25":"Ausfall von Geräten oder Systemen","G 0.26":"Fehlfunktion von Geräten oder Systemen","G 0.27":"Ressourcenmangel","G 0.28":"Software-Schwachstellen oder -Fehler","G 0.29":"Verstoß gegen Gesetze oder Regelungen","G 0.30":"Unberechtigte Nutzung oder Administration von Geräten und Systemen","G 0.31":"Fehlerhafte Nutzung oder Administration von Geräten und Systemen","G 0.32":"Missbrauch von Berechtigungen","G 0.33":"Personalausfall","G 0.34":"Anschlag","G 0.35":"Nötigung, Erpressung oder Korruption","G 0.36":"Identitätsdiebstahl","G 0.37":"Abstreiten von Handlungen","G 0.38":"Missbrauch personenbezogener Daten","G 0.39":"Schadprogramme","G 0.40":"Verhinderung von Diensten (Denial of Service)","G 0.41":"Sabotage","G 0.42":"Social Engineering","G 0.43":"Einspielen von Nachrichten","G 0.44":"Unbefugtes Eindringen in Räumlichkeiten","G 0.45":"Datenverlust","G 0.46":"Integritätsverlust schützenswerter Informationen","G 0.47":"Schädliche Seiteneffekte IT-gestützter Angriffe"};
 const ISO_THEME = {"5":"Organisatorisch","6":"Personell","7":"Physisch","8":"Technologisch"};
 const REL = {"equivalent-to":"gleichwertig","subset-of":"Teilmenge","intersects-with":"überschneidend","superset-of":"Obermenge"};
-const ST = {I: "umgesetzt", P: "teilweise", L: "geplant", "-": "ohne Angabe"};
+// Stand nach BSI-Standard 300-1 (4.1): erfüllt, nicht erfüllt, nicht anwendbar. Teilweise und geplant bleiben als Einzelheit.
+const ST = {I: "erfüllt", P: "nicht erfüllt, teilweise", L: "nicht erfüllt, geplant", "-": "ohne Angabe"};
+const NF = {temporary: "temporär", permanent: "dauerhaft"};
+const stLabel = r => ST[r.st] + (r.st !== "I" && NF[r.nf] ? ", " + NF[r.nf] : "");
+const devText = r => `Abweichung genehmigt: dauerhaft nicht erfüllt, Restrisiko${r.appr ? " am " + de(r.appr) : ""}${r.apprBy ? " von " + r.apprBy : ""} genehmigt${r.risk ? ", Risikoanalyse " + r.risk : ""}.`;
+const revText = r => r.rev || r.revBy ? `Bewertet${r.rev ? " am " + de(r.rev) : ""}${r.revBy ? " von " + r.revBy : ""}.` : "";
+const actRow = a => `<div class="act"><span class="id">${esc(a.id)}</span> ${esc(a.x)}${a.resp ? ` <span class="small">verantwortlich: ${esc(a.resp)}</span>` : ""}</div>`;
 const CATURL = D.catalogUrl;
 const BASIS = {measured: "gemessen", claimed: "zugesichert", reviewed: "Bewertung von Hand", none: "ohne Grundlage"};
 const FOUND = {s: "erfüllt", n: "nicht erfüllt", "-": "nicht gemessen"};
@@ -232,15 +238,15 @@ const de = d => d ? d.slice(8,10) + "." + d.slice(5,7) + "." + d.slice(0,4) : ""
 const byNum = (a, b) => a.localeCompare(b, "de", { numeric: true });
 const checkDef = new Map(D.checks.map(c => [c.id, c]));
 const trial = new Set(D.trial);
-const planKey = id => { const p = R[id].poam; if (!p) return "kein"; if (p.na) return "na"; if (p.dl && p.dl < TODAY) return "od"; return "dl"; };
+const planKey = id => { const p = R[id].poam; if (R[id].dev) return "dev"; if (!p) return "kein"; if (p.na) return "na"; if (p.dl && p.dl < TODAY) return "od"; return "dl"; };
 const glyph = id => { const r = R[id]; return r ? `<i class="sq ${r.st}${r.m ? " m" : ""}${planKey(id) === "od" ? " od" : ""}" aria-hidden="true"></i>` : `<i aria-hidden="true"></i>`; };
 const groupName = {}; IDS.forEach(i => groupName[R[i].g] = R[i].gt);
-const PLAN = {od: "Termin überschritten", dl: "Maßnahme mit Termin", na: "im Plan ohne Maßnahme", kein: "nicht im Plan"};
+const PLAN = {od: "Termin überschritten", dl: "Maßnahme mit Termin", na: "im Plan ohne Maßnahme", dev: "Abweichung genehmigt", kein: "nicht im Plan"};
 
 // Filterdimensionen: jede liefert die Werte einer Anforderung und eine Beschriftung
 const F = [
   { k: "st", name: "Stand", vals: r => [r.st], label: v => ST[v], order: ["I", "P", "L"] },
-  { k: "plan", name: "Maßnahmenplan", vals: (r, id) => [planKey(id)], label: v => PLAN[v], order: ["od", "dl", "na", "kein"] },
+  { k: "plan", name: "Maßnahmenplan", vals: (r, id) => [planKey(id)], label: v => PLAN[v], order: ["od", "dl", "na", "dev", "kein"] },
   { k: "m", name: "Messung", vals: r => [r.m ? "ja" : "nein"], label: v => v === "ja" ? "gemessen" : "nicht gemessen", order: ["ja", "nein"] },
   { k: "hx", name: "Verlauf", vals: (r, id) => [histKey(id)], label: v => HIST[v], order: ["neu", "rot", "wechselnd", "stabil", "eins"] },
   { k: "g", name: "Praxis", vals: r => [r.g], label: v => v + " " + groupName[v], sortByLabel: true },
@@ -256,7 +262,7 @@ const save = () => { try { localStorage.setItem("gsx-state", JSON.stringify({ se
 
 // Suche: jedes Wort muss irgendwo vorkommen (Kennung, Titel, Text, Prüfung, Norm, Gefährdung, Maßnahme)
 const hay = {};
-IDS.forEach(i => { const r = R[i]; hay[i] = [i, r.t, r.stm, r.doc, r.gt, r.c.join(" "), r.iso.map(x => "a." + x.id + " " + x.id).join(" "), r.thr.map(t => t + " " + (THREAT[t] || "")).join(" "), r.poam ? r.poam.a.map(a => a.id + " " + a.x).join(" ") : ""].join(" ").toLowerCase(); });
+IDS.forEach(i => { const r = R[i]; hay[i] = [i, r.t, r.stm, r.doc, r.gt, r.c.join(" "), r.iso.map(x => "a." + x.id + " " + x.id).join(" "), r.thr.map(t => t + " " + (THREAT[t] || "")).join(" "), r.poam ? r.poam.a.map(a => a.id + " " + a.x + " " + (a.resp || "")).join(" ") : ""].join(" ").toLowerCase(); });
 const words = () => state.q.toLowerCase().split(/\s+/).filter(Boolean);
 const matchQ = i => words().every(w => hay[i].includes(w));
 const matchF = (i, except) => F.every(f => { if (f.k === except) return true; const s = state.sel[f.k]; if (!s || !s.length) return true; const v = f.vals(R[i], i); return s.some(x => v.includes(x)); });
@@ -324,9 +330,9 @@ function renderList() {
   ul.innerHTML = LIST.map(i => {
     const r = R[i], pk = planKey(i), p = r.poam;
     const meta = [
-      `<span>${ST[r.st]}${r.m ? ", gemessen" : ""}</span>`,
+      `<span>${stLabel(r)}${r.m ? ", gemessen" : ""}</span>`,
       r.c.length ? `<span>${r.c.length} Prüfung${r.c.length > 1 ? "en" : ""}</span>` : "",
-      pk === "od" ? `<span class="bad">Termin ${de(p.dl)} überschritten</span>` : pk === "dl" ? `<span>Termin ${de(p.dl)}</span>` : pk === "na" ? `<span class="warn">ohne Maßnahme</span>` : ""
+      pk === "od" ? `<span class="bad">Termin ${de(p.dl)} überschritten</span>` : pk === "dl" ? `<span>Termin ${de(p.dl)}</span>` : pk === "na" ? `<span class="warn">ohne Maßnahme</span>` : pk === "dev" ? `<span>Abweichung genehmigt</span>` : ""
     ].join("");
     return `<li class="row" role="option" id="opt-${esc(i)}" data-id="${esc(i)}" aria-selected="${i === state.cur}">${glyph(i)}<div style="min-width:0"><div class="t1"><span class="id">${esc(i)}</span><span class="tt">${esc(r.t)}</span></div><div class="t2">${meta}</div></div></li>`;
   }).join("");
@@ -336,7 +342,7 @@ function renderList() {
 const item = (id, note) => {
   const r = R[id], e = D.ext[id];
   const t = r ? r.t : e ? e.t : "";
-  const q = note || (r ? ST[r.st] : e ? "nicht im Profil" : "");
+  const q = note || (r ? stLabel(r) : D.na[id] !== undefined ? "nicht anwendbar" : e ? "nicht im Profil" : "");
   const tip = r ? r.stm : e ? e.stm : "";
   return `<button type="button" class="item${r ? "" : " ext"}" data-open="${esc(id)}" title="${esc(tip)}">${glyph(id)}<span class="tx"><span class="id">${esc(id)}</span> <span class="tt">${esc(t)}</span></span><span class="q">${esc(q)}</span></button>`;
 };
@@ -346,17 +352,19 @@ const pivotRow = (k, v, main, sub, extra) => `<div class="pv"><div class="item" 
 
 function detailReq(id) {
   const r = R[id], p = r.poam, pk = planKey(id);
-  const statusPlan = pk === "od" ? `<span class="pill bad">Termin ${de(p.dl)} überschritten</span>` : pk === "dl" ? `<span class="pill">Termin ${de(p.dl)}</span>` : pk === "na" ? `<span class="pill warn">ohne Maßnahme</span>` : "";
-  const checks = r.c.length ? r.c.map(c => pivotRow("chk", c, c, checkDef.get(c)?.t || "", trial.has(c) ? ' <span class="tag">auf Probe</span>' : "")).join("") : `<span class="none">Keine Prüfung belegt diese Anforderung.</span>`;
-  const plan = !p ? `<span class="none">Kein Punkt im Maßnahmenplan.</span>` : p.na ? `<span class="warn">Im Plan, aber ohne Maßnahme und ohne Termin.</span>` :
-    p.a.map(a => `<div class="act"><span class="id">${esc(a.id)}</span> ${esc(a.x)}</div>`).join("") + (p.dl ? `<div class="small${pk === "od" ? " bad" : ""}">Termin ${de(p.dl)}</div>` : "");
+  const statusPlan = pk === "od" ? `<span class="pill bad">Termin ${de(p.dl)} überschritten</span>` : pk === "dl" ? `<span class="pill">Termin ${de(p.dl)}</span>` : pk === "na" ? `<span class="pill warn">ohne Maßnahme</span>` : pk === "dev" ? `<span class="pill">Abweichung genehmigt</span>` : "";
+  const checks = r.c.length ? r.c.map(c => pivotRow("chk", c, c, checkDef.get(c)?.t || "", (trial.has(c) ? ' <span class="tag">auf Probe</span>' : "") + (D.by[c] ? ` <span class="small">durchgeführt von ${esc(D.by[c])}</span>` : ""))).join("") : `<span class="none">Keine Prüfung belegt diese Anforderung.</span>`;
+  const plan = r.dev ? `<div>${esc(devText(r))}</div>` + (p ? p.a.map(actRow).join("") : "") :
+    !p ? `<span class="none">Kein Punkt im Maßnahmenplan.</span>` : p.na ? `<span class="warn">Im Plan, aber ohne Maßnahme und ohne Termin.</span>` :
+    p.a.map(actRow).join("") + (p.dl ? `<div class="small${pk === "od" ? " bad" : ""}">Termin ${de(p.dl)}</div>` : "");
   const nrel = [r.p].filter(Boolean).length + r.k.length + r.req.length + r.reqBy.length + r.rel.length;
   return `
     <h1><span class="id">${esc(id)}</span>${esc(r.t)}</h1>
-    <div class="status"><span class="s">${glyph(id)} ${ST[r.st]}</span><span>${r.m ? "durch Prüfung gemessen" : "nicht gemessen"}</span>${statusPlan}<span class="small">${esc(r.mv)} · ${esc(r.lvl)}</span></div>
+    <div class="status"><span class="s">${glyph(id)} ${stLabel(r)}</span><span>${r.m ? "durch Prüfung gemessen" : "nicht gemessen"}</span>${statusPlan}<span class="small">${esc(r.mv)} · ${esc(r.lvl)}</span></div>
     <p class="lead">${esc(r.stm).replace(/\b(MUSS|SOLLTE|KANN)\b/, '<span class="mv">$1</span>')}</p>
     ${r.gdn ? `<details class="hint"><summary>Umsetzungshinweise des BSI</summary><p>${esc(r.gdn)}</p></details>` : ""}
     ${r.rm ? `<div class="small">Grundlage: ${esc(BASIS[r.b] || r.b)}. ${esc(r.rm)}</div>` : ""}
+    ${revText(r) ? `<div class="small">${esc(revText(r))}</div>` : ""}
     <div class="sec"><h2>Verlauf <span>${NR} Läufe</span></h2>${histDetail(id)}</div>
     <div class="sec"><h2>Belege <span>${r.c.length} Prüfung${r.c.length === 1 ? "" : "en"}</span></h2>${checks}</div>
     <div class="sec"><h2>Maßnahmenplan</h2>${plan}</div>
@@ -397,19 +405,22 @@ function detailExt(id) {
 }
 function detailStart() {
   const c = k => IDS.filter(i => R[i].st === k).length, od = IDS.filter(i => planKey(i) === "od"), na = IDS.filter(i => planKey(i) === "na");
-  const meas = IDS.filter(i => R[i].m).length;
+  const meas = IDS.filter(i => R[i].m).length, dev = IDS.filter(i => R[i].dev).length;
+  const nfc = k => IDS.filter(i => R[i].st !== "I" && R[i].nf === k).length, nas = Object.keys(D.na).sort(byNum);
   return `<div class="start">
     <h1>Stand vom ${de(D.run.date)} ${esc(D.run.time)}</h1>
     ${D.warnings && D.warnings.length ? D.warnings.map(w => `<p class="warn">${esc(w)}</p>`).join("") : ""}
-    <p>${c("I")} von ${IDS.length} Anforderungen sind umgesetzt, ${c("P")} teilweise und ${c("L")} geplant. ${meas} sind durch eine Prüfung gemessen.</p>
+    <p>${c("I")} von ${IDS.length} Anforderungen sind erfüllt, ${c("P") + c("L")} nicht erfüllt (${c("P")} teilweise, ${c("L")} geplant${nfc("temporary") + nfc("permanent") ? `; ${nfc("temporary")} temporär, ${nfc("permanent")} dauerhaft` : ""}).${dev ? ` Bei ${dev} ist die Abweichung genehmigt.` : ""}${nas.length ? ` ${nas.length} weitere sind nicht anwendbar.` : ""} ${meas} sind durch eine Prüfung gemessen.</p>
     <p class="small">Suche oben nach Kennung, Titel oder Text. Ein Klick in der Liste öffnet die Akte. In der Akte öffnet ein Klick auf einen Bezug dessen Akte; „alle zeigen“ legt Prüfung, Norm, Gefährdung oder Praxis als Filter auf die Liste.</p>
     <div class="go">
       <button type="button" data-preset="od"><span>Termin überschritten</span><span class="num bad">${od.length}</span></button>
       <button type="button" data-preset="na"><span>Im Plan, aber ohne Maßnahme</span><span class="num">${na.length}</span></button>
-      <button type="button" data-preset="unmeasured"><span>Umgesetzt, aber nicht gemessen</span><span class="num">${IDS.filter(i => R[i].st === "I" && !R[i].m).length}</span></button>
-      <button type="button" data-preset="L"><span>Nur geplant</span><span class="num">${c("L")}</span></button>
+      ${dev ? `<button type="button" data-preset="dev"><span>Abweichung genehmigt</span><span class="num">${dev}</span></button>` : ""}
+      <button type="button" data-preset="unmeasured"><span>Erfüllt laut Plan, aber nicht gemessen</span><span class="num">${IDS.filter(i => R[i].st === "I" && !R[i].m).length}</span></button>
+      <button type="button" data-preset="L"><span>Nicht erfüllt, erst geplant</span><span class="num">${c("L")}</span></button>
       ${NR > 1 ? `<button type="button" data-preset="neu"><span>Seit dem letzten Lauf nicht mehr erfüllt</span><span class="num bad">${IDS.filter(i => histKey(i) === "neu").length}</span></button>` : ""}
     </div>
+    ${nas.length ? `<div class="sec"><h2>Nicht anwendbar <span>${nas.length}</span></h2>${nas.map(i => item(i, "nicht anwendbar") + `<div class="small">${esc(D.na[i] || "ohne Begründung")}</div>`).join("")}</div>` : ""}
     ${runsTable()}
     ${sourcesList()}
     </div>`;
@@ -424,7 +435,7 @@ function runsTable() {
       `<span class="ch">${k === 0 ? `<span class="small">erster Lauf</span>` : ch.length ? ch.slice(0, 12).map(i => `<button type="button" data-open="${esc(i)}" title="${esc(hst(i, k - 1) + " → " + hst(i, k))}">${esc(i)}</button>`).join("") + (ch.length > 12 ? `<span class="small">und ${ch.length - 12} weitere</span>` : "") : `<span class="small">keine Änderung</span>`}</span>`);
   }
   return `<div class="sec"><h2>Verlauf <span>${NR} Läufe, neuester oben</span></h2>
-    <div class="runs"><span class="h">Lauf</span><span class="h" title="umgesetzt / teilweise / geplant">Stand</span><span class="h" title="erfüllt · nicht erfüllt">Messung</span><span class="h">Änderungen</span>${rows.join("")}</div></div>`;
+    <div class="runs"><span class="h">Lauf</span><span class="h" title="erfüllt / nicht erfüllt: teilweise / geplant">Stand</span><span class="h" title="erfüllt · nicht erfüllt">Messung</span><span class="h">Änderungen</span>${rows.join("")}</div></div>`;
 }
 function sourcesList() {
   if (!D.sources || !D.sources.length) return "";
@@ -492,7 +503,7 @@ document.addEventListener("click", e => {
   if (pr) {
     const k = pr.dataset.preset;
     state.q = ""; qEl.value = "";
-    state.sel = k === "od" ? { plan: ["od"] } : k === "na" ? { plan: ["na"] } : k === "unmeasured" ? { st: ["I"], m: ["nein"] } : k === "neu" ? { hx: ["neu"] } : { st: ["L"] };
+    state.sel = k === "od" ? { plan: ["od"] } : k === "na" ? { plan: ["na"] } : k === "dev" ? { plan: ["dev"] } : k === "unmeasured" ? { st: ["I"], m: ["nein"] } : k === "neu" ? { hx: ["neu"] } : { st: ["L"] };
     save(); render(); return;
   }
   const a = t.closest('.trail a[href^="#"]');
