@@ -1,3 +1,104 @@
+## [0.3.3](https://github.com/ohartwig/grundschutz-viewer/compare/v0.3.2...v0.3.3) (2026-11-03)
+
+### :repeat: Continuous Integrations
+
+* **deps:** update code-signing docker tag to v1.4.88
+* **deps:** update code-signing docker tag to v1.4.87
+* **deps:** update code-signing docker tag to v1.4.86
+* **deps:** update code-signing docker tag to v1.4.85
+* **deps:** update code-signing docker tag to v1.4.84
+* **deps:** update code-signing docker tag to v1.4.83
+* **deps:** update code-signing docker tag to v1.4.82
+* **deps:** update code-signing docker tag to v1.4.81
+* **deps:** update code-signing docker tag to v1.4.80
+* **deps:** update code-signing docker tag to v1.4.79
+* **deps:** update code-signing docker tag to v1.4.78
+* **deps:** update code-signing docker tag to v1.4.77
+* **deps:** update code-signing docker tag to v1.4.76
+* **deps:** update code-signing docker tag to v1.4.75
+* **deps:** update code-signing docker tag to v1.4.74
+* **deps:** update code-signing docker tag to v1.4.73
+* **deps:** update code-signing docker tag to v1.4.72
+* **deps:** update code-signing docker tag to v1.4.71
+* **deps:** update code-signing docker tag to v1.4.70
+* **deps:** update code-signing docker tag to v1.4.69
+* **deps:** update code-signing docker tag to v1.4.68
+* **deps:** update code-signing docker tag to v1.4.67
+* **deps:** update code-signing docker tag to v1.4.66
+* **deps:** update code-signing docker tag to v1.4.65
+* **deps:** update code-signing docker tag to v1.4.64
+* **deps:** update code-signing docker tag to v1.4.63
+* **deps:** update code-signing docker tag to v1.4.62
+* **deps:** update code-signing docker tag to v1.4.61
+* **deps:** update code-signing docker tag to v1.4.60
+* **deps:** update code-signing docker tag to v1.4.59
+* **deps:** update code-signing docker tag to v1.4.58
+* **deps:** update code-signing docker tag to v1.4.57
+* **deps:** update code-signing docker tag to v1.4.56
+* **deps:** update code-signing docker tag to v1.4.55
+* **deps:** update code-signing docker tag to v1.4.54
+* **deps:** update code-signing docker tag to v1.4.53
+* **deps:** update code-signing docker tag to v1.4.52
+* **deps:** update code-signing docker tag to v1.4.51
+* **deps:** update code-signing docker tag to v1.4.50
+* **deps:** update code-signing docker tag to v1.4.49
+* **deps:** update code-signing docker tag to v1.4.48
+* **deps:** update code-signing docker tag to v1.4.47
+* **deps:** update code-signing docker tag to v1.4.46
+* **deps:** update code-signing docker tag to v1.4.45
+* **deps:** update code-signing docker tag to v1.4.44
+* **deps:** update code-signing docker tag to v1.4.43
+* **deps:** update code-signing docker tag to v1.4.42
+* **deps:** update code-signing docker tag to v1.4.41
+* **deps:** update code-signing docker tag to v1.4.40
+* **deps:** update code-signing docker tag to v1.4.39
+* **deps:** update code-signing docker tag to v1.4.38
+* **deps:** update code-signing docker tag to v1.4.37
+* **deps:** update code-signing docker tag to v1.4.36
+* **deps:** update code-signing docker tag to v1.4.35
+* **deps:** update code-signing docker tag to v1.4.34
+* **deps:** update code-signing docker tag to v1.4.33
+* **deps:** update code-signing docker tag to v1.4.32
+* **deps:** update code-signing docker tag to v1.4.31
+* **deps:** update code-signing docker tag to v1.4.30
+* **deps:** update code-signing docker tag to v1.4.29
+* **deps:** update code-signing docker tag to v1.4.28
+* **deps:** update code-signing docker tag to v1.4.27
+* **deps:** update code-signing docker tag to v1.4.25
+* **deps:** update code-signing docker tag to v1.4.24
+* **deps:** update code-signing docker tag to v1.4.23
+* **deps:** update code-signing docker tag to v1.4.22
+* **deps:** update code-signing docker tag to v1.4.21
+* **deps:** update code-signing docker tag to v1.4.20
+* **deps:** update code-signing docker tag to v1.4.19
+* **deps:** update code-signing docker tag to v1.4.18
+* **deps:** update code-signing docker tag to v1.4.17
+* **deps:** update code-signing docker tag to v1.4.16
+* **deps:** update code-signing docker tag to v1.4.15
+* **deps:** update code-signing docker tag to v1.4.14
+* **deps:** update code-signing docker tag to v1.4.13
+* **deps:** update code-signing docker tag to v1.4.12
+* **deps:** update code-signing docker tag to v1.4.11
+* **deps:** update code-signing docker tag to v1.4.10
+* **deps:** update code-signing docker tag to v1.4.9
+* **deps:** update code-signing docker tag to v1.4.8
+* **deps:** update code-signing docker tag to v1.4.7
+* **deps:** update code-signing docker tag to v1.4.6
+* **deps:** update code-signing docker tag to v1.4.5
+* **deps:** update code-signing docker tag to v1.4.4
+* **deps:** update code-signing docker tag to v1.4.3
+* **deps:** update code-signing docker tag to v1.4.2
+* **deps:** update code-signing docker tag to v1.4.0
+* **deps:** update code-signing docker tag to v1.3.88
+* **deps:** update code-signing docker tag to v1.3.87
+* **deps:** update code-signing docker tag to v1.3.86
+* **deps:** update code-signing docker tag to v1.3.85
+* notarise over S3's dual-stack name
+
+### :repeat: Chores
+
+* **repo-templates:** sync
+
 ## [0.3.2](https://github.com/ohartwig/grundschutz-viewer/compare/v0.2.4...v0.3.2) (2026-10-27)
 
 ### :sparkles: Features
