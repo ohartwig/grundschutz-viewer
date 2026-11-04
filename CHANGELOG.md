@@ -1,3 +1,18 @@
+## [0.3.5](https://github.com/ohartwig/grundschutz-viewer/compare/v0.3.4...v0.3.5) (2026-11-04)
+
+### :repeat: Continuous Integrations
+
+* **deps:** update code-signing docker tag to v1.4.95
+* **deps:** update code-signing docker tag to v1.4.94
+* **deps:** update code-signing docker tag to v1.4.93
+* **deps:** update code-signing docker tag to v1.4.92
+* **deps:** update code-signing docker tag to v1.4.91
+* **deps:** update code-signing docker tag to v1.4.90
+
+### :repeat: Chores
+
+* **repo-templates:** sync
+
 ## [0.3.4](https://github.com/ohartwig/grundschutz-viewer/compare/v0.3.3...v0.3.4) (2026-11-03)
 
 ### :repeat: Continuous Integrations
