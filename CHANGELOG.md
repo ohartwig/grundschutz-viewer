@@ -1,3 +1,9 @@
+## [0.3.15](https://github.com/ohartwig/grundschutz-viewer/compare/v0.3.14...v0.3.15) (2026-11-07)
+
+### :repeat: Chores
+
+* **deps:** update dependency franken-php/ci to v3.2.147-8.5
+
 ## [0.3.14](https://github.com/ohartwig/grundschutz-viewer/compare/v0.3.13...v0.3.14) (2026-11-07)
 
 ### :repeat: Chores
