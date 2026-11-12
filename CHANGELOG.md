@@ -1,3 +1,35 @@
+## [0.3.23](https://github.com/ohartwig/grundschutz-viewer/compare/v0.3.22...v0.3.23) (2026-11-12)
+
+### :bug: Fixes
+
+* **deps:** update dependency golang to v1.27.4
+
+### :repeat: Continuous Integrations
+
+* **deps:** update code-signing docker tag to v1.4.130
+* **deps:** update code-signing docker tag to v1.4.129
+* **deps:** update code-signing docker tag to v1.4.128
+* **deps:** update code-signing docker tag to v1.4.127
+* **deps:** update code-signing docker tag to v1.4.126
+* **deps:** update code-signing docker tag to v1.4.125
+* **deps:** update code-signing docker tag to v1.4.124
+* **deps:** update code-signing docker tag to v1.4.123
+* **deps:** update code-signing docker tag to v1.4.122
+* **deps:** update code-signing docker tag to v1.4.121
+* **deps:** update code-signing docker tag to v1.4.120
+* **deps:** update code-signing docker tag to v1.4.119
+* **deps:** update code-signing docker tag to v1.4.118
+* **deps:** update code-signing docker tag to v1.4.117
+* **deps:** update code-signing docker tag to v1.4.116
+* **deps:** update code-signing docker tag to v1.4.115
+* **deps:** update code-signing docker tag to v1.4.114
+* **deps:** update code-signing docker tag to v1.4.113
+* **deps:** update code-signing docker tag to v1.4.112
+* **deps:** update code-signing docker tag to v1.4.111
+* **deps:** update code-signing docker tag to v1.4.110
+* **deps:** update code-signing docker tag to v1.4.109
+* **deps:** update code-signing docker tag to v1.4.108
+
 ## [0.3.22](https://github.com/ohartwig/grundschutz-viewer/compare/v0.3.21...v0.3.22) (2026-11-09)
 
 ### :repeat: Chores
