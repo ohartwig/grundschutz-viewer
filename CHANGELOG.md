@@ -1,3 +1,32 @@
+## [0.3.25](https://github.com/ohartwig/grundschutz-viewer/compare/v0.3.23...v0.3.25) (2026-11-16)
+
+### :repeat: Continuous Integrations
+
+* **deps:** update code-signing docker tag to v1.4.150
+* **deps:** update code-signing docker tag to v1.4.149
+* **deps:** update code-signing docker tag to v1.4.148
+* **deps:** update code-signing docker tag to v1.4.147
+* **deps:** update code-signing docker tag to v1.4.146
+* **deps:** update code-signing docker tag to v1.4.145
+* **deps:** update code-signing docker tag to v1.4.144
+* **deps:** update code-signing docker tag to v1.4.143
+* **deps:** update code-signing docker tag to v1.4.142
+* **deps:** update code-signing docker tag to v1.4.141
+* **deps:** update code-signing docker tag to v1.4.140
+* **deps:** update code-signing docker tag to v1.4.139
+* **deps:** update code-signing docker tag to v1.4.138
+* **deps:** update code-signing docker tag to v1.4.137
+* **deps:** update code-signing docker tag to v1.4.136
+* **deps:** update code-signing docker tag to v1.4.135
+* **deps:** update code-signing docker tag to v1.4.134
+* **deps:** update code-signing docker tag to v1.4.133
+* **deps:** update code-signing docker tag to v1.4.132
+* **deps:** update code-signing docker tag to v1.4.131
+
+### :repeat: Chores
+
+* **deps:** update dependency franken-php/ci to v3.2.246-8.5
+
 ## [0.3.24](https://github.com/ohartwig/grundschutz-viewer/compare/v0.3.23...v0.3.24) (2026-11-16)
 
 ### :repeat: Continuous Integrations
