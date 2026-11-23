@@ -1,3 +1,20 @@
+## [0.3.30](https://github.com/ohartwig/grundschutz-viewer/compare/v0.3.29...v0.3.30) (2026-11-23)
+
+### :repeat: Continuous Integrations
+
+* **deps:** update code-signing docker tag to v1.4.236
+* **deps:** update code-signing docker tag to v1.4.223
+* **deps:** update code-signing docker tag to v1.4.222
+* **deps:** update code-signing docker tag to v1.4.216
+* **deps:** update code-signing docker tag to v1.4.215
+* **deps:** update code-signing docker tag to v1.4.196
+* **deps:** update code-signing docker tag to v1.4.179
+* **deps:** update code-signing docker tag to v1.4.168
+
+### :repeat: Chores
+
+* **deps:** update lefthook hook images
+
 ## [0.3.29](https://github.com/ohartwig/grundschutz-viewer/compare/v0.3.23...v0.3.29) (2026-11-17)
 
 ### :repeat: Continuous Integrations
